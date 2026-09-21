@@ -11,7 +11,6 @@ IF OBJECT_ID('dbo.Usuarios', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.Usuarios (
         Id              INT IDENTITY(1,1) PRIMARY KEY,
-        Matricula       NVARCHAR(30)    NOT NULL UNIQUE,
         Nome            NVARCHAR(120)   NOT NULL,
         Email           NVARCHAR(150)   NOT NULL UNIQUE,
         SenhaHash       NVARCHAR(256)   NOT NULL,
@@ -119,7 +118,7 @@ BEGIN
         Status              NVARCHAR(20) NOT NULL DEFAULT 'Confirmada',
         CONSTRAINT CK_ReservasEspaco_Periodo CHECK (DataHoraFim > DataHoraInicio),
         CONSTRAINT CK_ReservasEspaco_Status
-            CHECK (Status IN ('Pendente', 'Confirmada', 'Cancelada', 'Concluida'))
+            CHECK (Status IN ('Confirmada', 'Cancelada', 'Concluida'))
     );
 END
 GO
@@ -147,11 +146,7 @@ INSERT INTO dbo.Parametros (Chave, Valor, Descricao)
 SELECT v.Chave, v.Valor, v.Descricao
 FROM (VALUES
     ('ValorEmprestimoExterno', '5.00', 'Cobrança inicial do usuário externo (R$)'),
-    ('MultaDiaria',            '2.00', 'Multa por dia de atraso (R$)'),
-    ('LimiteAluno',            '3',    'Empréstimos simultâneos - Aluno'),
-    ('LimiteFuncionario',      '5',    'Empréstimos simultâneos - Funcionário'),
-    ('LimiteProfessor',        '5',    'Empréstimos simultâneos - Professor'),
-    ('LimiteExterno',          '2',    'Empréstimos simultâneos - Usuário externo')
+    ('MultaDiaria',            '2.00', 'Multa por dia de atraso (R$)')
 ) AS v (Chave, Valor, Descricao)
 WHERE NOT EXISTS (SELECT 1 FROM dbo.Parametros p WHERE p.Chave = v.Chave);
 GO

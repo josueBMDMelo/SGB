@@ -41,7 +41,11 @@
             reservaDeEspacosToolStripMenuItem = new ToolStripMenuItem();
             configuracoesToolStripMenuItem = new ToolStripMenuItem();
             sessaoToolStripMenuItem = new ToolStripMenuItem();
+            statusStrip1 = new StatusStrip();
+            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolStripStatusLabelVersao = new ToolStripStatusLabel();
             menuStrip1.SuspendLayout();
+            statusStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // contextMenuStrip1
@@ -68,25 +72,27 @@
             // usuariosToolStripMenuItem
             // 
             usuariosToolStripMenuItem.Name = "usuariosToolStripMenuItem";
-            usuariosToolStripMenuItem.Size = new Size(133, 22);
+            usuariosToolStripMenuItem.Size = new Size(180, 22);
             usuariosToolStripMenuItem.Text = "Usuários";
+            usuariosToolStripMenuItem.Click += usuariosToolStripMenuItem_Click;
             // 
             // livrosToolStripMenuItem
             // 
             livrosToolStripMenuItem.Name = "livrosToolStripMenuItem";
-            livrosToolStripMenuItem.Size = new Size(133, 22);
+            livrosToolStripMenuItem.Size = new Size(180, 22);
             livrosToolStripMenuItem.Text = "Livros";
+            livrosToolStripMenuItem.Click += livrosToolStripMenuItem_Click;
             // 
             // exemplaresToolStripMenuItem
             // 
             exemplaresToolStripMenuItem.Name = "exemplaresToolStripMenuItem";
-            exemplaresToolStripMenuItem.Size = new Size(133, 22);
+            exemplaresToolStripMenuItem.Size = new Size(180, 22);
             exemplaresToolStripMenuItem.Text = "Exemplares";
             // 
             // espacosToolStripMenuItem
             // 
             espacosToolStripMenuItem.Name = "espacosToolStripMenuItem";
-            espacosToolStripMenuItem.Size = new Size(133, 22);
+            espacosToolStripMenuItem.Size = new Size(180, 22);
             espacosToolStripMenuItem.Text = "Espaços";
             // 
             // emprestimosToolStripMenuItem
@@ -119,17 +125,41 @@
             sessaoToolStripMenuItem.Size = new Size(54, 20);
             sessaoToolStripMenuItem.Text = "Sessão";
             // 
+            // statusStrip1
+            // 
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabelVersao });
+            statusStrip1.Location = new Point(0, 428);
+            statusStrip1.Name = "statusStrip1";
+            statusStrip1.Size = new Size(800, 22);
+            statusStrip1.TabIndex = 2;
+            statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            toolStripStatusLabel1.Size = new Size(118, 17);
+            toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+            // 
+            // toolStripStatusLabelVersao
+            // 
+            toolStripStatusLabelVersao.Name = "toolStripStatusLabelVersao";
+            toolStripStatusLabelVersao.Size = new Size(118, 17);
+            toolStripStatusLabelVersao.Text = "toolStripStatusLabel2";
+            // 
             // FrmPrincipal
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "FrmPrincipal";
             Text = "Sistema de Gestão da Biblioteca";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            statusStrip1.ResumeLayout(false);
+            statusStrip1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -148,5 +178,8 @@
         private ToolStripMenuItem reservaDeEspacosToolStripMenuItem;
         private ToolStripMenuItem configuracoesToolStripMenuItem;
         private ToolStripMenuItem sessaoToolStripMenuItem;
+        private StatusStrip statusStrip1;
+        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel toolStripStatusLabelVersao;
     }
 }
