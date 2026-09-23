@@ -38,5 +38,47 @@ namespace SGB
             var tela = new FrmCadastroLivro();
             tela.ShowDialog();
         }
+
+        private void exemplaresToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tela = new FrmCadastroExemplar();
+            tela.ShowDialog();
+        }
+
+        private void realizarEmprestimoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tela = new FrmRealizarEmprestimo();
+            tela.ShowDialog();
+        }
+
+        private void emprestimosRealizadosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tela = new FrmEmprestimosRealizados();
+            tela.ShowDialog();
+        }
+
+        private void meusEmprestimosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tela = new FrmMeusEmprestimos();
+            tela.ShowDialog();
+        }
+
+        private void devolucoesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tela = new FrmDevolucao();
+            tela.ShowDialog();
+        }
+
+        private void espacosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tela = new FrmCadastroEspaco();
+            tela.ShowDialog();
+        }
+
+        private void reservaDeEspacosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var tela = new FrmReservaEspaco();
+            tela.ShowDialog();
+        }
     }
 }

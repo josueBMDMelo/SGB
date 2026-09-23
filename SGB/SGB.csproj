@@ -9,6 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Class1.cs" />
+    <Compile Remove="FrmTodosEmprestimos.cs" />
+    <Compile Remove="FrmTodosEmprestimos.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="FrmTodosEmprestimos.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.0" />
   </ItemGroup>

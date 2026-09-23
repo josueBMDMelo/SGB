@@ -30,4 +30,22 @@ public static class ConexaoBanco
         conexao.Open();
         return comando.ExecuteNonQuery();
     }
+
+    public static void ExecutarEmTransacao(Action<SqlConnection, SqlTransaction> operacoes)
+    {
+        using var conexao = new SqlConnection(ConnectionString);
+        conexao.Open();
+        using var transacao = conexao.BeginTransaction();
+
+        try
+        {
+            operacoes(conexao, transacao);
+            transacao.Commit();
+        }
+        catch
+        {
+            transacao.Rollback();
+            throw;
+        }
+    }
 }

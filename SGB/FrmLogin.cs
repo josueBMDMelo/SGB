@@ -27,8 +27,11 @@ namespace SGB
             if (resultado.Rows.Count == 1 &&
                 BCrypt.Net.BCrypt.Verify(txtSenha.Text.Trim(), resultado.Rows[0]["SenhaHash"].ToString()))
             {
+                int id = Convert.ToInt32(resultado.Rows[0]["Id"]);
                 string nome = resultado.Rows[0]["Nome"].ToString();
                 string perfil = resultado.Rows[0]["Perfil"].ToString();
+
+                SessaoUsuario.Iniciar(id, nome, perfil);
 
                 var principal = new FrmPrincipal(nome, perfil);
                 principal.Show();

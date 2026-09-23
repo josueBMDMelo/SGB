@@ -37,6 +37,9 @@
             exemplaresToolStripMenuItem = new ToolStripMenuItem();
             espacosToolStripMenuItem = new ToolStripMenuItem();
             emprestimosToolStripMenuItem = new ToolStripMenuItem();
+            realizarEmprestimoToolStripMenuItem = new ToolStripMenuItem();
+            emprestimosRealizadosToolStripMenuItem = new ToolStripMenuItem();
+            meusEmprestimosToolStripMenuItem = new ToolStripMenuItem();
             devolucoesToolStripMenuItem = new ToolStripMenuItem();
             reservaDeEspacosToolStripMenuItem = new ToolStripMenuItem();
             configuracoesToolStripMenuItem = new ToolStripMenuItem();
@@ -88,30 +91,56 @@
             exemplaresToolStripMenuItem.Name = "exemplaresToolStripMenuItem";
             exemplaresToolStripMenuItem.Size = new Size(180, 22);
             exemplaresToolStripMenuItem.Text = "Exemplares";
+            exemplaresToolStripMenuItem.Click += exemplaresToolStripMenuItem_Click;
             // 
             // espacosToolStripMenuItem
             // 
             espacosToolStripMenuItem.Name = "espacosToolStripMenuItem";
             espacosToolStripMenuItem.Size = new Size(180, 22);
             espacosToolStripMenuItem.Text = "Espaços";
+            espacosToolStripMenuItem.Click += espacosToolStripMenuItem_Click;
             // 
             // emprestimosToolStripMenuItem
             // 
+            emprestimosToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { realizarEmprestimoToolStripMenuItem, emprestimosRealizadosToolStripMenuItem, meusEmprestimosToolStripMenuItem });
             emprestimosToolStripMenuItem.Name = "emprestimosToolStripMenuItem";
             emprestimosToolStripMenuItem.Size = new Size(88, 20);
             emprestimosToolStripMenuItem.Text = "Empréstimos";
+            // 
+            // realizarEmprestimoToolStripMenuItem
+            // 
+            realizarEmprestimoToolStripMenuItem.Name = "realizarEmprestimoToolStripMenuItem";
+            realizarEmprestimoToolStripMenuItem.Size = new Size(201, 22);
+            realizarEmprestimoToolStripMenuItem.Text = "Realizar Empréstimo";
+            realizarEmprestimoToolStripMenuItem.Click += realizarEmprestimoToolStripMenuItem_Click;
+            // 
+            // emprestimosRealizadosToolStripMenuItem
+            // 
+            emprestimosRealizadosToolStripMenuItem.Name = "emprestimosRealizadosToolStripMenuItem";
+            emprestimosRealizadosToolStripMenuItem.Size = new Size(201, 22);
+            emprestimosRealizadosToolStripMenuItem.Text = "Empréstimos Realizados";
+            emprestimosRealizadosToolStripMenuItem.Click += emprestimosRealizadosToolStripMenuItem_Click;
+            // 
+            // meusEmprestimosToolStripMenuItem
+            // 
+            meusEmprestimosToolStripMenuItem.Name = "meusEmprestimosToolStripMenuItem";
+            meusEmprestimosToolStripMenuItem.Size = new Size(201, 22);
+            meusEmprestimosToolStripMenuItem.Text = "Meus Empréstimos";
+            meusEmprestimosToolStripMenuItem.Click += meusEmprestimosToolStripMenuItem_Click;
             // 
             // devolucoesToolStripMenuItem
             // 
             devolucoesToolStripMenuItem.Name = "devolucoesToolStripMenuItem";
             devolucoesToolStripMenuItem.Size = new Size(80, 20);
             devolucoesToolStripMenuItem.Text = "Devoluções";
+            devolucoesToolStripMenuItem.Click += devolucoesToolStripMenuItem_Click;
             // 
             // reservaDeEspacosToolStripMenuItem
             // 
             reservaDeEspacosToolStripMenuItem.Name = "reservaDeEspacosToolStripMenuItem";
             reservaDeEspacosToolStripMenuItem.Size = new Size(120, 20);
             reservaDeEspacosToolStripMenuItem.Text = "Reserva de Espaços";
+            reservaDeEspacosToolStripMenuItem.Click += reservaDeEspacosToolStripMenuItem_Click;
             // 
             // configuracoesToolStripMenuItem
             // 
@@ -181,5 +210,8 @@
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripStatusLabel toolStripStatusLabelVersao;
+        private ToolStripMenuItem realizarEmprestimoToolStripMenuItem;
+        private ToolStripMenuItem emprestimosRealizadosToolStripMenuItem;
+        private ToolStripMenuItem meusEmprestimosToolStripMenuItem;
     }
 }
