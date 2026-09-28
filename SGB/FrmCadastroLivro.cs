@@ -21,6 +21,14 @@ namespace SGB
 
         private void FrmCadastroLivro_Load(object sender, EventArgs e)
         {
+            // Usuário comum só pode consultar, não pode cadastrar
+            if (ControleAcesso.EhUsuarioComum())
+            {
+                btnCadastrar.Enabled = false;
+                txtTitulo.ReadOnly = true;
+                txtAutor.ReadOnly = true;
+            }
+
             CarregarLivros();
         }
 

@@ -21,6 +21,13 @@ namespace SGB
 
         private void FrmCadastroExemplar_Load(object sender, EventArgs e)
         {
+            if (ControleAcesso.EhUsuarioComum())
+            {
+                btnCadastrar.Enabled = false;
+                txtCodigoPatrimonio.ReadOnly = true;
+                cmbLivro.Enabled = false;
+            }
+
             CarregarLivrosNoCombo();
             CarregarExemplares();
         }
