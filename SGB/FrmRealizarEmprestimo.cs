@@ -65,28 +65,63 @@ namespace SGB
             {
                 ConexaoBanco.ExecutarEmTransacao((conexao, transacao) =>
                 {
-                    var cmdInsert = new SqlCommand(
-                        @"INSERT INTO Emprestimos (UsuarioId, ExemplarId, DataPrevistaDevolucao)
-                          VALUES (@UsuarioId, @ExemplarId, @DataPrevista)",
+                    // Verifica o tipo do usuário
+                    var cmdUsuario = new SqlCommand(
+                        "SELECT TipoUsuario FROM Usuarios WHERE Id = @Id",
                         conexao, transacao);
-                    cmdInsert.Parameters.AddWithValue("@UsuarioId", usuarioId);
-                    cmdInsert.Parameters.AddWithValue("@ExemplarId", exemplarId);
-                    cmdInsert.Parameters.AddWithValue("@DataPrevista", dataPrevista);
-                    cmdInsert.ExecuteNonQuery();
 
-                    var cmdUpdate = new SqlCommand(
-                        "UPDATE Exemplares SET Status = 'Emprestado' WHERE Id = @ExemplarId",
+                    cmdUsuario.Parameters.AddWithValue("@Id", usuarioId);
+
+                    string tipoUsuario = Convert.ToString(cmdUsuario.ExecuteScalar());
+
+                    // Cria o empréstimo
+                    var cmdEmprestimo = new SqlCommand(
+                        @"INSERT INTO Emprestimos 
+                  (UsuarioId, ExemplarId, DataPrevistaDevolucao)
+                  VALUES 
+                  (@UsuarioId, @ExemplarId, @DataPrevista);
+                  SELECT SCOPE_IDENTITY();",
                         conexao, transacao);
-                    cmdUpdate.Parameters.AddWithValue("@ExemplarId", exemplarId);
+
+                    cmdEmprestimo.Parameters.AddWithValue("@UsuarioId", usuarioId);
+                    cmdEmprestimo.Parameters.AddWithValue("@ExemplarId", exemplarId);
+                    cmdEmprestimo.Parameters.AddWithValue("@DataPrevista", dataPrevista);
+
+                    int emprestimoId = Convert.ToInt32(
+                        cmdEmprestimo.ExecuteScalar());
+
+                    // Atualiza o exemplar
+                    var cmdUpdate = new SqlCommand(
+                        "UPDATE Exemplares SET Status = 'Emprestado' WHERE Id = @Id",
+                        conexao, transacao);
+
+                    cmdUpdate.Parameters.AddWithValue("@Id", exemplarId);
                     cmdUpdate.ExecuteNonQuery();
+
+                    // Cobra R$ 5,00 somente de usuário externo
+                    if (tipoUsuario == "Externo")
+                    {
+                        var cmdCobranca = new SqlCommand(
+                            @"INSERT INTO Cobrancas
+                      (EmprestimoId, Tipo, Valor)
+                      VALUES
+                      (@EmprestimoId, 'Inicial', 5.00)",
+                            conexao, transacao);
+
+                        cmdCobranca.Parameters.AddWithValue(
+                            "@EmprestimoId", emprestimoId);
+
+                        cmdCobranca.ExecuteNonQuery();
+                    }
                 });
 
                 MessageBox.Show("Empréstimo registrado.");
-                CarregarExemplaresDisponiveis(); // o exemplar emprestado some da lista
+
+                CarregarExemplaresDisponiveis();
             }
             catch (SqlException ex)
             {
-                MessageBox.Show("Não foi possível registrar o empréstimo: " + ex.Message);
+                MessageBox.Show("Erro ao registrar empréstimo: " + ex.Message);
             }
         }
     }

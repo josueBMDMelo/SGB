@@ -23,6 +23,7 @@ BEGIN
         CONSTRAINT CK_Usuarios_Tipo
             CHECK (TipoUsuario IN ('Aluno', 'Professor', 'Funcionario', 'Externo'))
     );
+
 END
 GO
 
