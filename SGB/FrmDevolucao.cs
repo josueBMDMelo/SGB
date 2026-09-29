@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace SGB
 {
@@ -42,9 +44,16 @@ namespace SGB
                 "SELECT Valor FROM Parametros WHERE Chave = @chave",
                 new SqlParameter("@chave", "MultaDiaria"));
 
-            _multaDiaria = tabela.Rows.Count > 0
-                ? Convert.ToDecimal(tabela.Rows[0]["Valor"])
-                : 0m;
+            if (tabela.Rows.Count > 0)
+            {
+                string valorStr = tabela.Rows[0]["Valor"].ToString();
+
+                _multaDiaria = decimal.Parse(valorStr, CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                _multaDiaria = 0m;
+            }
         }
 
         private void CarregarEmprestimosAbertos()
