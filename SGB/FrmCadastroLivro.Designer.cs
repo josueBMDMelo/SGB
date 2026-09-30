@@ -36,6 +36,8 @@
             label2 = new Label();
             label3 = new Label();
             btnListar = new Button();
+            label4 = new Label();
+            comboBoxCategoria = new ComboBox();
             ((System.ComponentModel.ISupportInitialize)dgvLivros).BeginInit();
             SuspendLayout();
             // 
@@ -64,7 +66,7 @@
             // 
             // btnCadastrar
             // 
-            btnCadastrar.Location = new Point(17, 41);
+            btnCadastrar.Location = new Point(439, 58);
             btnCadastrar.Name = "btnCadastrar";
             btnCadastrar.Size = new Size(112, 23);
             btnCadastrar.TabIndex = 3;
@@ -101,7 +103,7 @@
             // 
             // btnListar
             // 
-            btnListar.Location = new Point(135, 41);
+            btnListar.Location = new Point(557, 58);
             btnListar.Name = "btnListar";
             btnListar.Size = new Size(112, 23);
             btnListar.TabIndex = 7;
@@ -109,11 +111,30 @@
             btnListar.UseVisualStyleBackColor = true;
             btnListar.Click += btnListar_Click;
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(18, 62);
+            label4.Name = "label4";
+            label4.Size = new Size(61, 15);
+            label4.TabIndex = 8;
+            label4.Text = "Categoria:";
+            // 
+            // comboBoxCategoria
+            // 
+            comboBoxCategoria.FormattingEnabled = true;
+            comboBoxCategoria.Location = new Point(85, 58);
+            comboBoxCategoria.Name = "comboBoxCategoria";
+            comboBoxCategoria.Size = new Size(255, 23);
+            comboBoxCategoria.TabIndex = 9;
+            // 
             // FrmCadastroLivro
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(comboBoxCategoria);
+            Controls.Add(label4);
             Controls.Add(btnListar);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -124,6 +145,7 @@
             Controls.Add(txtTitulo);
             Name = "FrmCadastroLivro";
             Text = "Cadastro de Livros";
+            Load += FrmCadastroLivro_Load;
             ((System.ComponentModel.ISupportInitialize)dgvLivros).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -139,5 +161,7 @@
         private Label label2;
         private Label label3;
         private Button btnListar;
+        private Label label4;
+        private ComboBox comboBoxCategoria;
     }
 }

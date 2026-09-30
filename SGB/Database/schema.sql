@@ -26,13 +26,28 @@ BEGIN
 END
 GO
 
+IF OBJECT_ID('dbo.Categorias', 'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Categorias (
+        Id          INT IDENTITY(1,1) PRIMARY KEY,
+        Nome        NVARCHAR(100) NOT NULL UNIQUE,
+        Ativo       BIT NOT NULL DEFAULT 1
+    );
+END
+GO
+
 IF OBJECT_ID('dbo.Livros', 'U') IS NULL
 BEGIN
     CREATE TABLE dbo.Livros (
         Id              INT IDENTITY(1,1) PRIMARY KEY,
-        Titulo          NVARCHAR(200)   NOT NULL,
-        Autor           NVARCHAR(150)   NULL,
-        Ativo           BIT             NOT NULL DEFAULT 1
+        Titulo          NVARCHAR(200) NOT NULL,
+        CategoriaId     INT NOT NULL,
+        Autor           NVARCHAR(150) NULL,
+        Ativo           BIT NOT NULL DEFAULT 1,
+
+        CONSTRAINT FK_Livros_Categorias
+            FOREIGN KEY (CategoriaId)
+            REFERENCES dbo.Categorias(Id)
     );
 END
 GO
@@ -145,8 +160,40 @@ GO
 INSERT INTO dbo.Parametros (Chave, Valor, Descricao)
 SELECT v.Chave, v.Valor, v.Descricao
 FROM (VALUES
-    ('ValorEmprestimoExterno', '5.00', 'Cobrança inicial do usuário externo (R$)'),
-    ('MultaDiaria',            '2.00', 'Multa por dia de atraso (R$)')
+    ('ValorEmprestimoExterno', '5.00', 'Cobranca inicial do usuario externo (R$)'),
+    ('MultaDiaria', '2.00', 'Multa por dia de atraso (R$)')
 ) AS v (Chave, Valor, Descricao)
-WHERE NOT EXISTS (SELECT 1 FROM dbo.Parametros p WHERE p.Chave = v.Chave);
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.Parametros p
+    WHERE p.Chave = v.Chave
+);
+GO
+
+INSERT INTO dbo.Categorias (Nome)
+SELECT Nome
+FROM (
+    VALUES
+    ('Romance'),
+    ('Terror'),
+    ('Aventura'),
+    ('Fantasia'),
+    ('Ficcao Cientifica'),
+    ('Misterio'),
+    ('Suspense'),
+    ('Drama'),
+    ('Biografia'),
+    ('Historia'),
+    ('Autoajuda'),
+    ('Poesia'),
+    ('Infantil'),
+    ('Juvenil'),
+    ('Religioso'),
+    ('Quadrinhos')
+) AS C(Nome)
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM dbo.Categorias CAT
+    WHERE CAT.Nome = C.Nome
+);
 GO
