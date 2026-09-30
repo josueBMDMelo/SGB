@@ -113,6 +113,7 @@
             chkMultaPaga.TabIndex = 7;
             chkMultaPaga.Text = "Multa recebida agora";
             chkMultaPaga.UseVisualStyleBackColor = true;
+            chkMultaPaga.Visible = false;
             // 
             // btnConfirmarDevolucao
             // 
