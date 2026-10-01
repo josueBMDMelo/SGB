@@ -1,16 +1,22 @@
+using System;
 using System.Windows.Forms;
+using SGB.Data;
 
 namespace SGB
 {
     public partial class FrmPrincipal : Form
     {
         private readonly string _perfil;
+        private readonly FrmLogin? _formLoginOrigem;
+        private bool _emLogoff = false;
         private const string VersaoSistema = "1.0.0";
 
-        public FrmPrincipal(string nome, string perfil)
+        public FrmPrincipal(string nome, string perfil, FrmLogin? formLogin = null)
         {
             InitializeComponent();
             _perfil = perfil;
+            _formLoginOrigem = formLogin;
+
             toolStripStatusLabelVersao.Text = $"v{VersaoSistema}";
             toolStripStatusLabelVersao.Alignment = ToolStripItemAlignment.Right;
             toolStripStatusLabel1.Text = $"Bem-vindo, {nome}!";
@@ -20,11 +26,58 @@ namespace SGB
         private void AplicarPermissoesDoPerfil()
         {
             bool podeGerenciar = _perfil is "Bibliotecario" or "Administrador";
-
             usuariosToolStripMenuItem.Visible = podeGerenciar;
-            // ajuste os nomes abaixo para os itens reais do seu menuStrip1:
-            // cadastroLivroToolStripMenuItem.Visible = podeGerenciar;
-            // cadastroExemplarToolStripMenuItem.Visible = podeGerenciar;
+        }
+
+        private void trocarUsuarioToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var confirmacao = MessageBox.Show(
+                "Deseja realmente encerrar a sessão atual e trocar de usuário?",
+                "Logoff",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (confirmacao == DialogResult.Yes)
+            {
+                _emLogoff = true;
+                SessaoUsuario.Limpar();
+
+                if (_formLoginOrigem != null)
+                {
+                    _formLoginOrigem.LimparECentralizar();
+                    _formLoginOrigem.Show();
+                }
+                else
+                {
+                    var novoLogin = new FrmLogin();
+                    novoLogin.Show();
+                }
+
+                this.Close();
+            }
+        }
+
+        private void sairToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var confirmacao = MessageBox.Show(
+                "Deseja realmente sair do sistema?",
+                "Encerrar Aplicação",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (confirmacao == DialogResult.Yes)
+            {
+                Application.Exit();
+            }
+        }
+
+        private void FrmPrincipal_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            // Se o usuário fechar pelo "X" da janela e não estiver fazendo logoff, encerra todo o aplicativo
+            if (!_emLogoff)
+            {
+                Application.Exit();
+            }
         }
 
         private void usuariosToolStripMenuItem_Click(object sender, EventArgs e)

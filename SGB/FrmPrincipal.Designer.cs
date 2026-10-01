@@ -44,6 +44,8 @@
             reservaDeEspacosToolStripMenuItem = new ToolStripMenuItem();
             configuracoesToolStripMenuItem = new ToolStripMenuItem();
             sessaoToolStripMenuItem = new ToolStripMenuItem();
+            trocarUsuarioToolStripMenuItem = new ToolStripMenuItem();
+            sairToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             toolStripStatusLabelVersao = new ToolStripStatusLabel();
@@ -150,9 +152,24 @@
             // 
             // sessaoToolStripMenuItem
             // 
+            sessaoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { trocarUsuarioToolStripMenuItem, sairToolStripMenuItem });
             sessaoToolStripMenuItem.Name = "sessaoToolStripMenuItem";
             sessaoToolStripMenuItem.Size = new Size(54, 20);
             sessaoToolStripMenuItem.Text = "Sessão";
+            // 
+            // trocarUsuarioToolStripMenuItem
+            // 
+            trocarUsuarioToolStripMenuItem.Name = "trocarUsuarioToolStripMenuItem";
+            trocarUsuarioToolStripMenuItem.Size = new Size(217, 22);
+            trocarUsuarioToolStripMenuItem.Text = "Trocar de Usuário (Logoff)";
+            trocarUsuarioToolStripMenuItem.Click += trocarUsuarioToolStripMenuItem_Click;
+            // 
+            // sairToolStripMenuItem
+            // 
+            sairToolStripMenuItem.Name = "sairToolStripMenuItem";
+            sairToolStripMenuItem.Size = new Size(217, 22);
+            sairToolStripMenuItem.Text = "Sair";
+            sairToolStripMenuItem.Click += sairToolStripMenuItem_Click;
             // 
             // statusStrip1
             // 
@@ -184,7 +201,9 @@
             Controls.Add(menuStrip1);
             MainMenuStrip = menuStrip1;
             Name = "FrmPrincipal";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Sistema de Gestão da Biblioteca";
+            FormClosed += FrmPrincipal_FormClosed;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             statusStrip1.ResumeLayout(false);
@@ -207,6 +226,8 @@
         private ToolStripMenuItem reservaDeEspacosToolStripMenuItem;
         private ToolStripMenuItem configuracoesToolStripMenuItem;
         private ToolStripMenuItem sessaoToolStripMenuItem;
+        private ToolStripMenuItem trocarUsuarioToolStripMenuItem;
+        private ToolStripMenuItem sairToolStripMenuItem;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripStatusLabel toolStripStatusLabelVersao;

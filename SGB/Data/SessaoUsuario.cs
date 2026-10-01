@@ -18,5 +18,12 @@ namespace SGB.Data
             Nome = nome;
             Perfil = perfil;
         }
+
+        public static void Limpar()
+        {
+            Id = 0;
+            Nome = string.Empty;
+            Perfil = string.Empty;
+        }
     }
 }

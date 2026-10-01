@@ -17,8 +17,22 @@ namespace SGB
             InitializeComponent();
         }
 
+        public void LimparECentralizar()
+        {
+            txtSenha.Clear();
+            txtEmail.Focus();
+            this.StartPosition = FormStartPosition.CenterScreen;
+        }
+
         private void btnEntrar_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtSenha.Text))
+            {
+                MessageBox.Show("Informe o e-mail e a senha para acessar o sistema.",
+                    "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             string sql = "SELECT Id, Nome, Perfil, SenhaHash FROM Usuarios WHERE Email = @Email AND Ativo = 1";
             var parametros = new[] { new SqlParameter("@Email", txtEmail.Text.Trim()) };
 
@@ -33,14 +47,15 @@ namespace SGB
 
                 SessaoUsuario.Iniciar(id, nome, perfil);
 
-                var principal = new FrmPrincipal(nome, perfil);
+                // Passa a referência da instância de login para FrmPrincipal
+                var principal = new FrmPrincipal(nome, perfil, this);
                 principal.Show();
                 this.Hide();
             }
             else
             {
-                MessageBox.Show("Não foram fornecidos todos os dados para login");
-                return;
+                MessageBox.Show("E-mail ou senha inválidos, ou usuário inativo.",
+                    "Falha no Login", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
     }
