@@ -76,7 +76,7 @@
             // 
             usuariosToolStripMenuItem.Name = "usuariosToolStripMenuItem";
             usuariosToolStripMenuItem.Size = new Size(180, 22);
-            usuariosToolStripMenuItem.Text = "Usuários";
+            usuariosToolStripMenuItem.Text = "Gerenciar Usuários";
             usuariosToolStripMenuItem.Click += usuariosToolStripMenuItem_Click;
             // 
             // livrosToolStripMenuItem
@@ -194,6 +194,9 @@
         }
 
         #endregion
+
+
+         
 
         private ContextMenuStrip contextMenuStrip1;
         private MenuStrip menuStrip1;

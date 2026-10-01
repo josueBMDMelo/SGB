@@ -9,7 +9,7 @@ public static class DatabaseInitializer
     {
         GarantirBancoExiste(connectionString);
         ExecutarSchema(connectionString);
-        CriarAdminSeNecessario(connectionString);
+        CriarUsuariosPadraoSeNecessario(connectionString);
     }
 
     private static void GarantirBancoExiste(string connectionString)
@@ -28,6 +28,11 @@ public static class DatabaseInitializer
     private static void ExecutarSchema(string connectionString)
     {
         string caminho = Path.Combine(AppContext.BaseDirectory, "Database", "schema.sql");
+        if (!File.Exists(caminho))
+        {
+            throw new FileNotFoundException($"O script de banco de dados não foi encontrado em: {caminho}");
+        }
+
         string script = File.ReadAllText(caminho);
 
         using var conn = new SqlConnection(connectionString);
@@ -44,22 +49,38 @@ public static class DatabaseInitializer
         }
     }
 
-    private static void CriarAdminSeNecessario(string connectionString)
+
+    private static void InserirUsuarioSeNaoExistir(
+        SqlConnection conn,
+        string nome,
+        string email,
+        string senha,
+        string perfil,
+        string tipo)
+    {
+        string sql = @"
+        IF NOT EXISTS (SELECT 1 FROM dbo.Usuarios WHERE Email = @email)
+        BEGIN
+            INSERT INTO dbo.Usuarios (Nome, Email, SenhaHash, Perfil, TipoUsuario, Ativo, DataCadastro)
+            VALUES (@nome, @email, @hash, @perfil, @tipo, 1, GETDATE())
+        END";
+
+        using var cmd = new SqlCommand(sql, conn);
+        cmd.Parameters.AddWithValue("@nome", nome);
+        cmd.Parameters.AddWithValue("@email", email);
+        cmd.Parameters.AddWithValue("@hash", BCrypt.Net.BCrypt.HashPassword(senha));
+        cmd.Parameters.AddWithValue("@perfil", perfil);
+        cmd.Parameters.AddWithValue("@tipo", tipo);
+
+        cmd.ExecuteNonQuery();
+    }
+    private static void CriarUsuariosPadraoSeNecessario(string connectionString)
     {
         using var conn = new SqlConnection(connectionString);
         conn.Open();
 
-        using (var check = new SqlCommand("SELECT COUNT(*) FROM dbo.Usuarios", conn))
-        {
-            if ((int)check.ExecuteScalar()! > 0) return;
-        }
-
-        using var ins = new SqlCommand(
-            @"INSERT INTO dbo.Usuarios (Nome, Email, SenhaHash, Perfil, TipoUsuario)
-      VALUES (@nome, @email, @hash, 'Administrador', 'Funcionario')", conn);
-        ins.Parameters.AddWithValue("@nome", "Administrador");
-        ins.Parameters.AddWithValue("@email", "admin@sgb.local");
-        ins.Parameters.AddWithValue("@hash", BCrypt.Net.BCrypt.HashPassword("admin123"));
-        ins.ExecuteNonQuery();
+        InserirUsuarioSeNaoExistir(conn, "Administrador", "admin@sgb.local", "admin123", "Administrador", "Funcionario");
+        InserirUsuarioSeNaoExistir(conn, "Bibliotecário Padrão", "biblio@sgb.local", "biblio123", "Bibliotecario", "Funcionario");
+        InserirUsuarioSeNaoExistir(conn, "Aluno Teste", "aluno@sgb.local", "aluno123", "Usuario", "Aluno");
     }
 }

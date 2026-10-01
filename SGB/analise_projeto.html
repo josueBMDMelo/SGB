@@ -1,0 +1,883 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise do Projeto SGB - Sistema de Gestão de Biblioteca</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        main {
+            padding: 40px;
+        }
+        
+        section {
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+        
+        h3 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .info-box {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.2);
+        }
+        
+        .feature-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .tech-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .flow-diagram {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 2px dashed #667eea;
+        }
+        
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 0.95em;
+        }
+        
+        .flow-step::before {
+            content: "→";
+            color: #764ba2;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.3em;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .status-item {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .status-item strong {
+            display: block;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .status-example {
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+        }
+        
+        footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+            color: #666;
+        }
+        
+        .version-badge {
+            display: inline-block;
+            background: #764ba2;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+        
+        .database-schema {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        
+        .db-table {
+            background: white;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        
+        .db-table strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .db-field {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            margin-left: 10px;
+            padding: 3px;
+            color: #333;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 1px 3px;
+            border-radius: 3px;
+        }
+        
+        .success {
+            color: #28a745;
+            font-weight: 600;
+        }
+        
+        .warning {
+            color: #ffc107;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 SGB - Sistema de Gestão de Biblioteca</h1>
+            <p>Análise Completa do Projeto</p>
+            <span class="version-badge">v1.0.0</span>
+        </header>
+        
+        <main>
+            <!-- SEÇÃO: O QUE É O PROJETO -->
+            <section>
+                <h2>📋 O Que É o Projeto?</h2>
+                
+                <div class="info-box">
+                    <p>
+                        <strong>SGB (Sistema de Gestão de Biblioteca)</strong> é uma aplicação Windows Desktop desenvolvida em 
+                        <span class="highlight">.NET 9</span> com Windows Forms que gerencia todas as operações de uma biblioteca. 
+                        O sistema permite o controle de empréstimos, devoluções, reservas de espaços e cadastros de usuários, 
+                        livros e exemplares com controle de acesso baseado em perfis de usuário.
+                    </p>
+                </div>
+                
+                <h3>🎯 Objetivo Principal</h3>
+                <p>
+                    Automatizar e gerenciar os processos de uma biblioteca, incluindo:
+                </p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Controle de empréstimos e devoluções de livros</li>
+                    <li>Cadastro e gerenciamento de usuários, livros e exemplares</li>
+                    <li>Reserva de espaços (salas de estudo)</li>
+                    <li>Geração de multas por atraso</li>
+                    <li>Controle de permissões por perfil de usuário</li>
+                </ul>
+            </section>
+            
+            <!-- SEÇÃO: ARQUITETURA E TECNOLOGIA -->
+            <section>
+                <h2>🏗️ Arquitetura e Tecnologia</h2>
+                
+                <h3>Stack Tecnológico</h3>
+                <div class="tech-stack">
+                    <span class="tech-badge">.NET 9.0</span>
+                    <span class="tech-badge">Windows Forms</span>
+                    <span class="tech-badge">SQL Server</span>
+                    <span class="tech-badge">C# 12</span>
+                    <span class="tech-badge">BCrypt</span>
+                    <span class="tech-badge">Microsoft.Data.SqlClient</span>
+                </div>
+                
+                <h3>Padrão Arquitetural</h3>
+                <div class="info-box">
+                    <p>
+                        <strong>Camadas:</strong> O projeto segue uma arquitetura simples com separação entre:
+                    </p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>UI (Presentation):</strong> Formulários Windows Forms (FrmXxx.cs)</li>
+                        <li><strong>Data Access:</strong> Classes de conexão e gerenciamento de banco (ConexaoBanco.cs)</li>
+                        <li><strong>Business Logic:</strong> Lógica distribuída nos formulários</li>
+                        <li><strong>Database:</strong> SQL Server com schema predefinido</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- SEÇÃO: ESTRUTURA DO PROJETO -->
+            <section>
+                <h2>📁 Estrutura do Projeto</h2>
+                
+                <h3>Diretórios Principais</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Diretório</th>
+                            <th>Descrição</th>
+                            <th>Arquivos Principais</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SGB\</strong></td>
+                            <td>Raiz do projeto</td>
+                            <td>Program.cs, SGB.csproj</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SGB\Data\</strong></td>
+                            <td>Camada de dados e acesso ao banco</td>
+                            <td>ConexaoBanco.cs, DatabaseInitializer.cs, SessaoUsuario.cs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SGB\Database\</strong></td>
+                            <td>Script do banco de dados</td>
+                            <td>schema.sql</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Formulários (Interface Gráfica)</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🔐 FrmLogin</h4>
+                        <p>Autenticação de usuários com validação de email e senha (hash BCrypt)</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📖 FrmCadastroLivro</h4>
+                        <p>Cadastro e gerenciamento de livros da biblioteca</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📚 FrmCadastroExemplar</h4>
+                        <p>Registro de exemplares individuais com código de patrimônio</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>👥 FrmCadastroUsuario</h4>
+                        <p>Cadastro de usuários com perfis (Aluno, Professor, Funcionário)</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📤 FrmRealizarEmprestimo</h4>
+                        <p>Registro de novos empréstimos de livros</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📥 FrmDevolucao</h4>
+                        <p>Processamento de devoluções de livros</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📋 FrmMeusEmprestimos</h4>
+                        <p>Visualização pessoal de empréstimos e histórico</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📊 FrmEmprestimosRealizados</h4>
+                        <p>Relatório geral de todos os empréstimos</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>🎓 FrmCadastroEspaco</h4>
+                        <p>Gerenciamento de espaços (salas de estudo)</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4>📅 FrmReservaEspaco</h4>
+                        <p>Sistema de reserva de espaços/salas</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- SEÇÃO: FUNCIONALIDADES PRINCIPAIS -->
+            <section>
+                <h2>⚙️ Funcionalidades Principais</h2>
+                
+                <h3>1. Autenticação e Autorização</h3>
+                <div class="info-box">
+                    <p>
+                        <strong>Sistema de Login:</strong> Validação com email e senha criptografada em BCrypt.
+                        Três perfis de acesso: Usuário, Bibliotecário e Administrador.
+                    </p>
+                    <p style="margin-top: 10px;">
+                        <strong>Sessão:</strong> A classe <span class="highlight">SessaoUsuario</span> mantém informações 
+                        do usuário logado durante toda a execução da aplicação.
+                    </p>
+                </div>
+                
+                <h3>2. Gerenciamento de Empréstimos</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">Selecionar usuário</div>
+                    <div class="flow-step">Escolher exemplar disponível</div>
+                    <div class="flow-step">Definir data de devolução prevista</div>
+                    <div class="flow-step">Registrar empréstimo (transação)</div>
+                    <div class="flow-step">Atualizar status do exemplar para "Emprestado"</div>
+                </div>
+                
+                <h3>3. Devolução de Livros</h3>
+                <div class="info-box">
+                    <p>
+                        <strong>Processamento de Devolução:</strong> Registra a data de devolução, 
+                        calcula dias de atraso e atualiza o status do exemplar para "Disponível". 
+                        Se houver atraso, gera multa automaticamente.
+                    </p>
+                </div>
+                
+                <h3>4. Status de Exemplares</h3>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <strong>Disponível</strong>
+                        <div class="status-example">Pronto para empréstimo</div>
+                    </div>
+                    <div class="status-item">
+                        <strong>Emprestado</strong>
+                        <div class="status-example">Em poder de alguém</div>
+                    </div>
+                    <div class="status-item">
+                        <strong>Reservado</strong>
+                        <div class="status-example">Aguardando devolução</div>
+                    </div>
+                    <div class="status-item">
+                        <strong>Indisponível</strong>
+                        <div class="status-example">Não pode sair</div>
+                    </div>
+                    <div class="status-item">
+                        <strong>Manutenção</strong>
+                        <div class="status-example">Em reparo</div>
+                    </div>
+                </div>
+                
+                <h3>5. Controle de Atrasos e Multas</h3>
+                <div class="info-box">
+                    <p>
+                        <strong>Sistema de Multas:</strong> Calculadas automaticamente quando há atraso na devolução.
+                        <br/>
+                        <strong>Parâmetros configuráveis:</strong>
+                    </p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><span class="highlight">ValorEmprestimoExterno</span>: R$ 5,00</li>
+                        <li><span class="highlight">MultaDiaria</span>: R$ 2,00 por dia de atraso</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- SEÇÃO: BANCO DE DADOS -->
+            <section>
+                <h2>🗄️ Banco de Dados</h2>
+                
+                <h3>Informações Gerais</h3>
+                <div class="info-box">
+                    <p>
+                        <strong>SGBD:</strong> SQL Server<br/>
+                        <strong>Nome do Banco:</strong> SGB<br/>
+                        <strong>Inicialização:</strong> Automática na primeira execução
+                    </p>
+                </div>
+                
+                <h3>Tabelas Principais</h3>
+                <div class="database-schema">
+                    <div class="db-table">
+                        <strong>👤 Usuarios</strong>
+                        <div class="db-field">Id, Nome, Email, SenhaHash, Perfil, TipoUsuario, Ativo, DataCadastro</div>
+                        <p style="margin-top: 8px; font-size: 0.9em;">
+                            Armazena usuários do sistema com validação de perfil e tipo.
+                        </p>
+                    </div>
+                    
+                    <div class="db-table">
+                        <strong>📖 Livros</strong>
+                        <div class="db-field">Id, Titulo, Autor, Ativo</div>
+                        <p style="margin-top: 8px; font-size: 0.9em;">
+                            Catálogo de livros disponíveis na biblioteca.
+                        </p>
+                    </div>
+                    
+                    <div class="db-table">
+                        <strong>📚 Exemplares</strong>
+                        <div class="db-field">Id, LivroId, CodigoPatrimonio, Status</div>
+                        <p style="margin-top: 8px; font-size: 0.9em;">
+                            Instâncias físicas de cada livro com código de patrimônio único.
+                        </p>
+                    </div>
+                    
+                    <div class="db-table">
+                        <strong>📤 Emprestimos</strong>
+                        <div class="db-field">Id, UsuarioId, ExemplarId, DataEmprestimo, DataPrevistaDevolucao, DataDevolucao, DiasAtraso, Status</div>
+                        <p style="margin-top: 8px; font-size: 0.9em;">
+                            Registro de cada empréstimo com histórico completo.
+                        </p>
+                    </div>
+                    
+                    <div class="db-table">
+                        <strong>💰 Cobrancas</strong>
+                        <div class="db-field">Id, EmprestimoId, Tipo, Valor, Pago, DataGeracao</div>
+                        <p style="margin-top: 8px; font-size: 0.9em;">
+                            Registro de multas e cobranças associadas aos empréstimos.
+                        </p>
+                    </div>
+                    
+                    <div class="db-table">
+                        <strong>🎓 Espacos</strong>
+                        <div class="db-field">Id, Nome, Tipo, Localizacao, Capacidade, Ativo</div>
+                        <p style="margin-top: 8px; font-size: 0.9em;">
+                            Espaços da biblioteca disponíveis para reserva (salas de estudo, etc).
+                        </p>
+                    </div>
+                    
+                    <div class="db-table">
+                        <strong>📅 ReservasEspaco</strong>
+                        <div class="db-field">Id, UsuarioId, EspacoId, DataHoraInicio, DataHoraFim, Status</div>
+                        <p style="margin-top: 8px; font-size: 0.9em;">
+                            Sistema de reserva de espaços com controle de período e disponibilidade.
+                        </p>
+                    </div>
+                    
+                    <div class="db-table">
+                        <strong>⚙️ Parametros</strong>
+                        <div class="db-field">Chave, Valor, Descricao</div>
+                        <p style="margin-top: 8px; font-size: 0.9em;">
+                            Configurações globais do sistema (multas, valores, etc).
+                        </p>
+                    </div>
+                </div>
+                
+                <h3>Constraints e Índices</h3>
+                <div class="info-box">
+                    <p>
+                        <span class="success">✓</span> <strong>Índice Único:</strong> Um exemplar só pode ter um empréstimo aberto por vez 
+                        (<span class="highlight">UX_Emprestimos_ExemplarAberto</span>)
+                    </p>
+                    <p style="margin-top: 10px;">
+                        <span class="success">✓</span> <strong>Índice de Período:</strong> Otimização de buscas de reservas por espaço e data 
+                        (<span class="highlight">IX_ReservasEspaco_Espaco_Periodo</span>)
+                    </p>
+                    <p style="margin-top: 10px;">
+                        <span class="success">✓</span> <strong>Validações:</strong> Check constraints em várias tabelas para garantir integridade 
+                        de dados (perfis, tipos, status, etc)
+                    </p>
+                </div>
+            </section>
+            
+            <!-- SEÇÃO: FLUXO DE FUNCIONAMENTO -->
+            <section>
+                <h2>🔄 Fluxo de Funcionamento</h2>
+                
+                <h3>Inicialização da Aplicação</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">Program.Main() executa</div>
+                    <div class="flow-step">DatabaseInitializer.Inicializar() verifica banco</div>
+                    <div class="flow-step">Cria banco "SGB" se não existir</div>
+                    <div class="flow-step">Executa schema.sql (criação de tabelas)</div>
+                    <div class="flow-step">Cria usuário admin padrão se necessário</div>
+                    <div class="flow-step">Exibe FrmLogin para autenticação</div>
+                </div>
+                
+                <h3>Fluxo de Login</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">Usuário insere email e senha</div>
+                    <div class="flow-step">Consulta banco de dados (tabela Usuarios)</div>
+                    <div class="flow-step">Valida hash BCrypt da senha</div>
+                    <div class="flow-step">SessaoUsuario.Iniciar() armazena dados da sessão</div>
+                    <div class="flow-step">Abre FrmPrincipal com permissões de perfil</div>
+                </div>
+                
+                <h3>Fluxo de Empréstimo</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">Acessa "Realizar Empréstimo"</div>
+                    <div class="flow-step">Seleciona usuário e exemplar disponível</div>
+                    <div class="flow-step">Define prazo de devolução</div>
+                    <div class="flow-step">Sistema executa em TRANSAÇÃO (Begin, Commit, Rollback)</div>
+                    <div class="flow-step">Insere registro em Emprestimos</div>
+                    <div class="flow-step">Atualiza exemplar para status "Emprestado"</div>
+                    <div class="flow-step">Exemplar desaparece da lista de disponíveis</div>
+                </div>
+            </section>
+            
+            <!-- SEÇÃO: SEGURANÇA -->
+            <section>
+                <h2>🔒 Segurança</h2>
+                
+                <h3>Autenticação</h3>
+                <div class="info-box">
+                    <p>
+                        <span class="success">✓</span> <strong>BCrypt Hash:</strong> Senhas são armazenadas em hash BCrypt, 
+                        não em texto plano
+                    </p>
+                    <p style="margin-top: 10px;">
+                        <span class="success">✓</span> <strong>SQL Injection Protection:</strong> Uso de SqlParameter para todas 
+                        as consultas
+                    </p>
+                </div>
+                
+                <h3>Autorização</h3>
+                <div class="info-box">
+                    <p>
+                        <span class="warning">⚠</span> <strong>Controle de Acesso:</strong> Baseado em perfil do usuário 
+                        (Usuário, Bibliotecário, Administrador)
+                    </p>
+                    <p style="margin-top: 10px;">
+                        Formulários de gerenciamento só são visíveis para Bibliotecários e Administradores
+                    </p>
+                </div>
+                
+                <h3>Integridade de Dados</h3>
+                <div class="info-box">
+                    <p>
+                        <span class="success">✓</span> <strong>Transações:</strong> Operações críticas (como empréstimos) 
+                        executam em transação ACID
+                    </p>
+                    <p style="margin-top: 10px;">
+                        <span class="success">✓</span> <strong>Foreign Keys:</strong> Relacionamentos entre tabelas 
+                        mantidos no banco
+                    </p>
+                </div>
+            </section>
+            
+            <!-- SEÇÃO: CONTROLE DE ACESSO -->
+            <section>
+                <h2>👥 Controle de Acesso por Perfil</h2>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Funcionalidade</th>
+                            <th>👤 Usuário</th>
+                            <th>📚 Bibliotecário</th>
+                            <th>⚙️ Administrador</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Ver Meus Empréstimos</strong></td>
+                            <td style="text-align: center; color: green;">✓</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Reservar Espaços</strong></td>
+                            <td style="text-align: center; color: green;">✓</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Realizar Empréstimo</strong></td>
+                            <td style="text-align: center; color: red;">✗</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Processar Devolução</strong></td>
+                            <td style="text-align: center; color: red;">✗</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cadastrar Livros</strong></td>
+                            <td style="text-align: center; color: red;">✗</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cadastrar Exemplares</strong></td>
+                            <td style="text-align: center; color: red;">✗</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cadastrar Usuários</strong></td>
+                            <td style="text-align: center; color: red;">✗</td>
+                            <td style="text-align: center; color: red;">✗</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gerenciar Espaços</strong></td>
+                            <td style="text-align: center; color: red;">✗</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                            <td style="text-align: center; color: green;">✓</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- SEÇÃO: TECNOLOGIAS E DEPENDÊNCIAS -->
+            <section>
+                <h2>📦 Tecnologias e Dependências</h2>
+                
+                <h3>Framework e Linguagem</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Componente</th>
+                            <th>Versão/Detalhes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>.NET</strong></td>
+                            <td>9.0 (net9.0-windows7.0)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Linguagem</strong></td>
+                            <td>C# com Implicit Usings e Nullable Reference Types</td>
+                        </tr>
+                        <tr>
+                            <td><strong>UI Framework</strong></td>
+                            <td>Windows Forms (Desktop)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tipo de Output</strong></td>
+                            <td>WinExe (Aplicação Windows)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Pacotes NuGet</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pacote</th>
+                            <th>Versão</th>
+                            <th>Propósito</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>BCrypt.Net-Next</strong></td>
+                            <td>4.2.0</td>
+                            <td>Criptografia de senhas (hash bcrypt)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Microsoft.Data.SqlClient</strong></td>
+                            <td>7.1.0</td>
+                            <td>Conexão e acesso ao SQL Server</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- SEÇÃO: ADMIN PADRÃO -->
+            <section>
+                <h2>🔑 Usuário Padrão</h2>
+                
+                <div class="info-box">
+                    <p>
+                        <strong>Usuário Admin Criado Automaticamente:</strong>
+                    </p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Nome:</strong> Administrador</li>
+                        <li><strong>Email:</strong> admin@sgb.local</li>
+                        <li><strong>Senha:</strong> admin123</li>
+                        <li><strong>Perfil:</strong> Administrador</li>
+                        <li><strong>Tipo:</strong> Funcionário</li>
+                    </ul>
+                    <p style="margin-top: 15px; color: #d32f2f;">
+                        <strong>⚠️ IMPORTANTE:</strong> Alterar a senha padrão na primeira execução por questões de segurança.
+                    </p>
+                </div>
+            </section>
+            
+            <!-- SEÇÃO: FLUXOS DE NEGÓCIO -->
+            <section>
+                <h2>💼 Fluxos de Negócio</h2>
+                
+                <h3>Fluxo 1: Novo Usuário Realiza Empréstimo</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">Usuário faz login com suas credenciais</div>
+                    <div class="flow-step">Acessa "Realizar Empréstimo" (se bibliotecário)</div>
+                    <div class="flow-step">Seleciona usuário que pegará o livro</div>
+                    <div class="flow-step">Escolhe exemplar disponível</div>
+                    <div class="flow-step">Define data de devolução (padrão: 7 dias)</div>
+                    <div class="flow-step">Sistema confirma a operação</div>
+                </div>
+                
+                <h3>Fluxo 2: Usuário Verifica Seus Empréstimos</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">Usuário faz login</div>
+                    <div class="flow-step">Clica em "Meus Empréstimos"</div>
+                    <div class="flow-step">Visualiza tabela com todos seus empréstimos</div>
+                    <div class="flow-step">Pode filtrar por: Todos, Em aberto, Atrasados, Devolvidos</div>
+                    <div class="flow-step">Vê status de cada livro e prazos</div>
+                </div>
+                
+                <h3>Fluxo 3: Devolução com Possível Multa</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step">Bibliotecário acessa "Devoluções"</div>
+                    <div class="flow-step">Localiza empréstimo a devolver</div>
+                    <div class="flow-step">Sistema registra data de devolução</div>
+                    <div class="flow-step">Calcula dias de atraso automaticamente</div>
+                    <div class="flow-step">Se atrasado: gera multa (R$ 2.00/dia)</div>
+                    <div class="flow-step">Exemplar retorna para status "Disponível"</div>
+                </div>
+            </section>
+            
+            <!-- SEÇÃO: RESUMO TÉCNICO -->
+            <section>
+                <h2>🔧 Resumo Técnico</h2>
+                
+                <h3>Pontos Positivos</h3>
+                <div class="info-box">
+                    <ul style="margin-left: 20px;">
+                        <li><span class="success">✓</span> Inicialização automática do banco de dados</li>
+                        <li><span class="success">✓</span> Uso de transações para integridade de dados</li>
+                        <li><span class="success">✓</span> Criptografia de senhas com BCrypt</li>
+                        <li><span class="success">✓</span> Proteção contra SQL Injection com SqlParameters</li>
+                        <li><span class="success">✓</span> Controle de acesso baseado em perfil</li>
+                        <li><span class="success">✓</span> Sistema de filtros em telas principais</li>
+                        <li><span class="success">✓</span> Índices no banco para otimização</li>
+                    </ul>
+                </div>
+                
+                <h3>Pontos para Melhoria</h3>
+                <div class="info-box">
+                    <ul style="margin-left: 20px;">
+                        <li><span class="warning">⚠</span> Lógica de negócio acoplada aos formulários (não há separação clara)</li>
+                        <li><span class="warning">⚠</span> Não há testes unitários aparentes</li>
+                        <li><span class="warning">⚠</span> Falta logging e auditoria de operações</li>
+                        <li><span class="warning">⚠</span> Tratamento de exceções básico</li>
+                        <li><span class="warning">⚠</span> Falta validação em entrada de dados</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- SEÇÃO: CONCLUSÃO -->
+            <section>
+                <h2>✅ Conclusão</h2>
+                
+                <div class="info-box" style="border-left-color: #764ba2;">
+                    <p>
+                        O <strong>SGB</strong> é um sistema bem estruturado de gestão de biblioteca desenvolvido em .NET 9 
+                        com Windows Forms. Ele implementa funcionalidades essenciais como:
+                    </p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Autenticação segura com BCrypt</li>
+                        <li>Gerenciamento completo de empréstimos e devoluções</li>
+                        <li>Controle de multas por atraso</li>
+                        <li>Reserva de espaços da biblioteca</li>
+                        <li>Controle de permissões por perfil</li>
+                        <li>Persistência em SQL Server com integridade referencial</li>
+                    </ul>
+                    <p style="margin-top: 15px;">
+                        O projeto demonstra boas práticas de segurança e possui um banco de dados bem modelado. 
+                        É uma solução pronta para uso em uma biblioteca de pequeno a médio porte.
+                    </p>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Análise gerada em 2024</p>
+            <p style="margin-top: 10px; color: #999;">SGB v1.0.0 - Sistema de Gestão de Biblioteca</p>
+        </footer>
+    </div>
+</body>
+</html>

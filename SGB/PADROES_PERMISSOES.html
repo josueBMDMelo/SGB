@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Padr�o de Controle de Permiss�es | SGB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        main {
+            padding: 40px;
+        }
+
+        section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .card.success {
+            border-left-color: #4caf50;
+            background: #f0f8f0;
+        }
+
+        .card.info {
+            border-left-color: #2196f3;
+            background: #f0f7ff;
+        }
+
+        .card.warning {
+            border-left-color: #ff9800;
+            background: #fff8f0;
+        }
+
+        .card.example {
+            border-left-color: #9c27b0;
+            background: #f3e5f5;
+        }
+
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            border-left: 5px solid #667eea;
+        }
+
+        .keyword {
+            color: #c678dd;
+        }
+
+        .string {
+            color: #98c379;
+        }
+
+        .comment {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .class-name {
+            color: #e5c07b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .badge.pattern {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge.location {
+            background: #2196f3;
+            color: white;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .comparison-item {
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+
+        .comparison-item.current {
+            border-color: #667eea;
+            background: #f0f7ff;
+        }
+
+        .comparison-item h4 {
+            margin-top: 0;
+            color: #667eea;
+        }
+
+        .flow {
+            background: #f8f9fa;
+            border: 2px dashed #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #667eea;
+        }
+
+        .flow-step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .list-simple {
+            list-style-position: inside;
+            margin: 15px 0;
+        }
+
+        .list-simple li {
+            margin-bottom: 8px;
+            padding-left: 10px;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>?? Padr�o de Controle de Permiss�es</h1>
+            <p>SGB - Sistema de Gest�o de Biblioteca</p>
+        </header>
+
+        <main>
+            <!-- INTRODU��O -->
+            <section>
+                <h2>?? Resposta: SIM! O Projeto J� Tem!</h2>
+
+                <div class="card success">
+                    <h3>? Confirmado</h3>
+                    <p>O projeto <strong>SGB</strong> j� implementa controle de permiss�es de usu�rio para fun��es e UI. Voc� n�o precisa criar do zero!</p>
+                </div>
+
+                <h3>Onde Encontrar</h3>
+                <p>Existem <strong>dois padr�es implementados</strong>:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Padr�o</th>
+                            <th>Localiza��o</th>
+                            <th>Tipo</th>
+                            <th>N�vel de Permiss�o</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge pattern">Padr�o 1</span></td>
+                            <td><code>FrmPrincipal.cs</code></td>
+                            <td>Menu Visibility</td>
+                            <td>Bibliotec�rio ou Admin</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge pattern">Padr�o 2</span></td>
+                            <td><code>FrmReservaEspaco.cs</code></td>
+                            <td>Form Access Block</td>
+                            <td>Bibliotec�rio ou Admin</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- PADR�O 1: MENU -->
+            <section>
+                <h2>?? Padr�o 1: Controle de Menu (FrmPrincipal.cs)</h2>
+
+                <h3>O que faz?</h3>
+                <p>Mostra ou esconde itens do menu baseado no perfil do usu�rio.</p>
+
+                <h3>C�digo Atual</h3>
+                <div class="code-block"><span class="keyword">private void</span> AplicarPermissoesDoPerfil()
+{
+    <span class="keyword">bool</span> podeGerenciar = _perfil <span class="keyword">is</span> <span class="string">"Bibliotecario"</span> <span class="keyword">or</span> <span class="string">"Administrador"</span>;
+
+    usuariosToolStripMenuItem.Visible = podeGerenciar;
+    <span class="comment">// cadastroLivroToolStripMenuItem.Visible = podeGerenciar;</span>
+    <span class="comment">// cadastroExemplarToolStripMenuItem.Visible = podeGerenciar;</span>
+}</div>
+
+                <div class="card info">
+                    <h4><span class="icon">??</span>Como funciona?</h4>
+                    <ul class="list-simple">
+                        <li><strong>Entrada:</strong> <code>_perfil</code> (passado no construtor)</li>
+                        <li><strong>L�gica:</strong> Verifica se � "Bibliotecario" OU "Administrador"</li>
+                        <li><strong>A��o:</strong> Define <code>Visible</code> do menu item</li>
+                        <li><strong>Resultado:</strong> Menu item aparece ou desaparece</li>
+                    </ul>
+                </div>
+
+                <h3>Fluxo de Execu��o</h3>
+                <div class="flow">
+                    <div class="flow-step">
+                        <div class="flow-step-number">1</div>
+                        <div>Usu�rio faz login em <code>FrmLogin.cs</code></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">2</div>
+                        <div>Perfil � recuperado do BD e armazenado em <code>SessaoUsuario.Perfil</code></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">3</div>
+                        <div><code>FrmPrincipal</code> � instanciado: <code>new FrmPrincipal(nome, perfil)</code></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">4</div>
+                        <div>No construtor, chama <code>AplicarPermissoesDoPerfil()</code></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">5</div>
+                        <div>Menu items s�o ocultados conforme permiss�o</div>
+                    </div>
+                </div>
+
+                <h3>Exemplo Real</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usu�rio</th>
+                            <th>Perfil</th>
+                            <th>podeGerenciar</th>
+                            <th>Menu "Usu�rios" Vis�vel?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Jo�o</td>
+                            <td>Usuario</td>
+                            <td>false</td>
+                            <td>? N�o</td>
+                        </tr>
+                        <tr>
+                            <td>Maria</td>
+                            <td>Bibliotecario</td>
+                            <td>true</td>
+                            <td>? Sim</td>
+                        </tr>
+                        <tr>
+                            <td>Admin</td>
+                            <td>Administrador</td>
+                            <td>true</td>
+                            <td>? Sim</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- PADR�O 2: FORM ACCESS -->
+            <section>
+                <h2>?? Padr�o 2: Bloqueio de Acesso ao Formul�rio (FrmReservaEspaco.cs)</h2>
+
+                <h3>O que faz?</h3>
+                <p>Impede que usu�rios sem permiss�o abram o formul�rio.</p>
+
+                <h3>C�digo Atual</h3>
+                <div class="code-block"><span class="keyword">private void</span> FrmReservaEspaco_Load(<span class="keyword">object</span> sender, EventArgs e)
+{
+    <span class="comment">// Somente Bibliotec�rio e Administrador</span>
+    <span class="keyword">if</span> (SessaoUsuario.Perfil != <span class="string">"Bibliotecario"</span> &&
+        SessaoUsuario.Perfil != <span class="string">"Administrador"</span>)
+    {
+        MessageBox.Show(
+            <span class="string">"Voc� n�o possui permiss�o para acessar o gerenciamento de reservas."</span>,
+            <span class="string">"Acesso negado"</span>,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+
+        Close();
+        <span class="keyword">return</span>;
+    }
+
+    ConfigurarFiltros();
+    CarregarUsuarios();
+    CarregarEspacos();
+    CarregarReservas();
+}</div>
+
+                <div class="card warning">
+                    <h4><span class="icon">??</span>Ponto-Chave</h4>
+                    <p>Este � um padr�o <strong>DEFENSIVO</strong>. Mesmo que o bot�o do menu esteja oculto, se algu�m tentar abrir o formul�rio diretamente, ser� bloqueado!</p>
+                </div>
+
+                <h3>Fluxo de Execu��o</h3>
+                <div class="flow">
+                    <div class="flow-step">
+                        <div class="flow-step-number">1</div>
+                        <div>Formul�rio carrega (evento <code>Load</code>)</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">2</div>
+                        <div>Verifica <code>SessaoUsuario.Perfil</code></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">3</div>
+                        <div><span class="highlight">Se n�o for Bibliotecario ou Administrador:</span></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">4</div>
+                        <div>Mostra MessageBox de erro</div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">5</div>
+                        <div>Fecha o formul�rio com <code>Close()</code></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">6</div>
+                        <div><code>return</code> para n�o carregar dados</div>
+                    </div>
+                </div>
+
+                <h3>Varia��es de Sintaxe</h3>
+                <div class="comparison">
+                    <div class="comparison-item current">
+                        <h4>Padr�o 1: if negativo</h4>
+                        <div class="code-block" style="font-size: 0.85em;"><span class="keyword">if</span> (SessaoUsuario.Perfil != <span class="string">"Bibliotecario"</span> &&
+    SessaoUsuario.Perfil != <span class="string">"Administrador"</span>)
+{
+    <span class="comment">// Bloquear acesso</span>
+}</div>
+                    </div>
+                    <div class="comparison-item">
+                        <h4>Padr�o 2: if positivo</h4>
+                        <div class="code-block" style="font-size: 0.85em;"><span class="keyword">if</span> (SessaoUsuario.Perfil <span class="keyword">is</span> <span class="string">"Bibliotecario"</span> <span class="keyword">or</span> <span class="string">"Administrador"</span>)
+{
+    <span class="comment">// Permitir acesso</span>
+}</div>
+                    </div>
+                </div>
+
+                <div class="card info">
+                    <p><strong>?? Nota:</strong> Ambas s�o equivalentes. A primeira � mais literal, a segunda usa pattern matching (C# 9+).</p>
+                </div>
+            </section>
+
+            <!-- COMPARA��O PADR�ES -->
+            <section>
+                <h2>?? Compara��o dos Dois Padr�es</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Aspecto</th>
+                            <th>Padr�o 1 (Menu)</th>
+                            <th>Padr�o 2 (Form Access)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Localiza��o</strong></td>
+                            <td>FrmPrincipal.cs</td>
+                            <td>FrmReservaEspaco.cs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Quando executa</strong></td>
+                            <td>Construtor da form principal</td>
+                            <td>Evento Load do formul�rio</td>
+                        </tr>
+                        <tr>
+                            <td><strong>O que faz</strong></td>
+                            <td>Mostra/esconde UI</td>
+                            <td>Bloqueia acesso</td>
+                        </tr>
+                        <tr>
+                            <td><strong>N�vel de Seguran�a</strong></td>
+                            <td>?? Moderado (s� UI)</td>
+                            <td>?? Alto (bloqueia tudo)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>M�todo de Bloqueio</strong></td>
+                            <td>visibility false</td>
+                            <td>Close() + return</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pode ser contornado?</strong></td>
+                            <td>SIM (inspetor de elementos)</td>
+                            <td>N�O (verdadeira seguran�a)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="card warning">
+                    <h4><span class="icon">??</span>Importante</h4>
+                    <p>O Padr�o 2 � <strong>mais seguro</strong> porque bloqueia no c�digo, n�o apenas na UI. Use AMBOS para m�xima seguran�a!</p>
+                </div>
+            </section>
+
+            <!-- PARA SUAS FUN��ES -->
+            <section>
+                <h2>? Como Usar em FrmCadastroUsuario.cs</h2>
+
+                <h3>Cen�rio: Voc� quer que S� Admin possa gerenciar usu�rios</h3>
+
+                <h3>Solu��o: Use o Padr�o 2 (mais seguro)</h3>
+                <div class="code-block"><span class="keyword">private void</span> FrmCadastroUsuario_Load(<span class="keyword">object</span> sender, EventArgs e)
+{
+    <span class="comment">// Validar permiss�o - Apenas Admin pode gerenciar usu�rios</span>
+    <span class="keyword">if</span> (SessaoUsuario.Perfil != <span class="string">"Administrador"</span>)
+    {
+        MessageBox.Show(
+            <span class="string">"Voc� n�o tem permiss�o para acessar esta funcionalidade!"</span>,
+            <span class="string">"Acesso negado"</span>,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+        <span class="keyword">this</span>.Close();
+        <span class="keyword">return</span>;
+    }
+
+    <span class="comment">// S� chega aqui se for Admin</span>
+    CarregarUsuarios();
+    ConfigurarCombos();
+}</div>
+
+                <h3>Se preferir ser mais permissivo (Bibliotec�rio + Admin):</h3>
+                <div class="code-block"><span class="keyword">if</span> (SessaoUsuario.Perfil != <span class="string">"Administrador"</span> && 
+    SessaoUsuario.Perfil != <span class="string">"Bibliotecario"</span>)
+{
+    MessageBox.Show(<span class="string">"Sem permiss�o!"</span>);
+    <span class="keyword">this</span>.Close();
+    <span class="keyword">return</span>;
+}</div>
+
+                <h3>Ou usando pattern matching (C# 9+):</h3>
+                <div class="code-block"><span class="keyword">if</span> (SessaoUsuario.Perfil <span class="keyword">is not</span> (<span class="string">"Administrador"</span> <span class="keyword">or</span> <span class="string">"Bibliotecario"</span>))
+{
+    MessageBox.Show(<span class="string">"Sem permiss�o!"</span>);
+    <span class="keyword">this</span>.Close();
+    <span class="keyword">return</span>;
+}</div>
+
+                <div class="card success">
+                    <h4><span class="icon">?</span>Recomenda��o</h4>
+                    <p>Use o <strong>pattern matching</strong> (�ltima op��o). � mais moderno, leg�vel e alinhado com C# 12+ do seu projeto.</p>
+                </div>
+            </section>
+
+            <!-- SEGURAN�A DUPLA -->
+            <section>
+                <h2>??? Estrat�gia de Seguran�a em Camadas</h2>
+
+                <h3>N�vel 1: Menu (Oculta��o)</h3>
+                <div class="card">
+                    <p><strong>Onde:</strong> FrmPrincipal.cs</p>
+                    <p><strong>O que faz:</strong> Usu�rios normais n�o veem o bot�o</p>
+                    <p><strong>Seguran�a:</strong> ?? Apenas UI (pode ser contornada)</p>
+                </div>
+
+                <h3>N�vel 2: Acesso � Forma (Bloqueio Real)</h3>
+                <div class="card">
+                    <p><strong>Onde:</strong> FrmCadastroUsuario.cs (evento Load)</p>
+                    <p><strong>O que faz:</strong> Se algu�m tentar abrir, � bloqueado</p>
+                    <p><strong>Seguran�a:</strong> ?? Verdadeira seguran�a (c�digo, n�o UI)</p>
+                </div>
+
+                <h3>Como Implementar Ambos</h3>
+                <div class="code-block"><span class="comment">// === FrmPrincipal.cs ===</span>
+<span class="keyword">private void</span> AplicarPermissoesDoPerfil()
+{
+    <span class="keyword">bool</span> podeGerenciar = SessaoUsuario.Perfil 
+        <span class="keyword">is</span> <span class="string">"Administrador"</span>;
+
+    gerenciarUsuariosToolStripMenuItem.Visible = podeGerenciar;
+}
+
+<span class="comment">// === FrmCadastroUsuario.cs ===</span>
+<span class="keyword">private void</span> FrmCadastroUsuario_Load(<span class="keyword">object</span> sender, EventArgs e)
+{
+    <span class="keyword">if</span> (SessaoUsuario.Perfil <span class="keyword">is not</span> <span class="string">"Administrador"</span>)
+    {
+        MessageBox.Show(<span class="string">"Acesso negado!"</span>);
+        <span class="keyword">this</span>.Close();
+        <span class="keyword">return</span>;
+    }
+
+    CarregarUsuarios();
+}</div>
+            </section>
+
+            <!-- PERFILES EXISTENTES -->
+            <section>
+                <h2>?? Perfis de Usu�rio do Sistema</h2>
+
+                <p>Confira quais perfis existem no BD (tabela Usuarios):</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Perfil</th>
+                            <th>Descri��o</th>
+                            <th>Permiss�es T�picas</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge" style="background: #4caf50;">Usuario</span></td>
+                            <td>Utilizador comum</td>
+                            <td>Ver meus empr�stimos, reservar salas</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge" style="background: #2196f3;">Bibliotecario</span></td>
+                            <td>Funcion�rio da biblioteca</td>
+                            <td>Gerenciar empr�stimos, cadastros, reservas</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge" style="background: #f44336;">Administrador</span></td>
+                            <td>Gestor do sistema</td>
+                            <td>Tudo + gerenciar usu�rios, config</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="card info">
+                    <p><strong>Fonte:</strong> Schema.sql ? Constraint CK_Usuarios_Perfil</p>
+                </div>
+            </section>
+
+            <!-- CHECKLIST IMPLEMENTA��O -->
+            <section>
+                <h2>? Checklist: Adicionar Permiss�o em FrmCadastroUsuario</h2>
+
+                <h3>Para sua tarefa de Gerenciar Usu�rios:</h3>
+
+                <ol style="margin: 20px 0; padding-left: 30px;">
+                    <li>
+                        <strong>Abra FrmCadastroUsuario.cs</strong>
+                        <ul>
+                            <li>Procure o evento <code>Load</code> (ou crie um se n�o existir)</li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <strong>Copie este c�digo no in�cio do Load:</strong>
+                        <div class="code-block" style="margin: 10px 0; font-size: 0.85em;"><span class="keyword">if</span> (SessaoUsuario.Perfil <span class="keyword">is not</span> <span class="string">"Administrador"</span>)
+{
+    MessageBox.Show(
+        <span class="string">"Voc� n�o tem permiss�o!"</span>,
+        <span class="string">"Acesso negado"</span>,
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Warning);
+    <span class="keyword">this</span>.Close();
+    <span class="keyword">return</span>;
+}
+                        </div>
+                    </li>
+
+                    <li>
+                        <strong>Compile e teste:</strong>
+                        <ul>
+                            <li>Admin consegue abrir? ?</li>
+                            <li>Usu�rio comum n�o consegue? ?</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <div class="card success">
+                    <h4><span class="icon">?</span>Pronto!</h4>
+                    <p>Voc� j� tem um padr�o s�lido implementado no projeto. Basta seguir o mesmo padr�o para suas novas funcionalidades!</p>
+                </div>
+            </section>
+
+            <!-- RESUMO FINAL -->
+            <section>
+                <h2>?? Resumo: Padr�es Encontrados</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Arquivo</th>
+                            <th>M�todo</th>
+                            <th>Fun��o</th>
+                            <th>Permiss�o</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>FrmPrincipal.cs</td>
+                            <td>AplicarPermissoesDoPerfil()</td>
+                            <td>Oculta menu items</td>
+                            <td>Bibliotec�rio OU Admin</td>
+                        </tr>
+                        <tr>
+                            <td>FrmReservaEspaco.cs</td>
+                            <td>FrmReservaEspaco_Load()</td>
+                            <td>Bloqueia formul�rio</td>
+                            <td>Bibliotec�rio OU Admin</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="card success">
+                    <h4><span class="icon">?</span>Para Sua Task</h4>
+                    <p>Use o <strong>Padr�o 2</strong> em FrmCadastroUsuario.cs. � mais seguro e j� est� sendo usado no projeto.</p>
+                </div>
+            </section>
+
+            <!-- REFERENCIAS -->
+            <section>
+                <h2>?? Refer�ncias</h2>
+
+                <ul style="margin: 20px 0; padding-left: 30px;">
+                    <li><a href="file:///C:/Users/david.sribeiro4/UC8/SGB/FrmPrincipal.cs" style="color: #667eea;">FrmPrincipal.cs</a> - Padr�o 1 (Menu)</li>
+                    <li><a href="file:///C:/Users/david.sribeiro4/UC8/SGB/FrmReservaEspaco.cs" style="color: #667eea;">FrmReservaEspaco.cs</a> - Padr�o 2 (Acesso)</li>
+                    <li><a href="file:///C:/Users/david.sribeiro4/UC8/SGB/Data/SessaoUsuario.cs" style="color: #667eea;">SessaoUsuario.cs</a> - Onde fica o Perfil</li>
+                </ul>
+            </section>
+        </main>
+
+        <footer>
+            <p><strong>Padr�o de Controle de Permiss�es - SGB</strong></p>
+            <p style="margin-top: 10px; font-size: 0.9em; color: #999;">
+                .NET 9 | Windows Forms | C# 12
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

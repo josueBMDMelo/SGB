@@ -1,0 +1,1415 @@
+﻿<!DOCTYPE html>
+<html lang="pt-br">
+f<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia de Implementação - Gerenciar Usuários | SGB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .breadcrumb {
+            background: #f5f5f5;
+            padding: 15px 40px;
+            border-bottom: 1px solid #ddd;
+            font-size: 0.9em;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        main {
+            padding: 40px;
+        }
+
+        /* SIDEBAR + CONTENT */
+        .wrapper {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            border-bottom: 3px solid #764ba2;
+            padding-bottom: 10px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 8px;
+        }
+
+        .sidebar a {
+            color: #667eea;
+            text-decoration: none;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+
+        .sidebar a:hover {
+            background: #f0f0f0;
+            color: #764ba2;
+            padding-left: 20px;
+        }
+
+        .sidebar a.active {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* SECTIONS */
+        section {
+            margin-bottom: 50px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        /* CARDS */
+        .card {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .card.warning {
+            border-left-color: #ff9800;
+            background: #fff8f0;
+        }
+
+        .card.success {
+            border-left-color: #4caf50;
+            background: #f0f8f0;
+        }
+
+        .card.error {
+            border-left-color: #f44336;
+            background: #fef0f0;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* CODE BLOCK */
+        .code-block {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+            border-left: 5px solid #667eea;
+        }
+
+        .code-block code {
+            color: inherit;
+        }
+
+        .keyword {
+            color: #c678dd;
+        }
+
+        .string {
+            color: #98c379;
+        }
+
+        .comment {
+            color: #5c6370;
+            font-style: italic;
+        }
+
+        .class-name {
+            color: #e5c07b;
+        }
+
+        /* BADGES */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .badge.priority-high {
+            background: #ff5252;
+            color: white;
+        }
+
+        .badge.priority-medium {
+            background: #ff9800;
+            color: white;
+        }
+
+        .badge.priority-low {
+            background: #4caf50;
+            color: white;
+        }
+
+        .badge.file {
+            background: #2196f3;
+            color: white;
+        }
+
+        /* CHECKLIST */
+        .checklist {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .checklist li {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checklist li:hover {
+            background: #e8e8e8;
+        }
+
+        .checklist input[type="checkbox"] {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+        }
+
+        .checklist input[type="checkbox"]:checked + label {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        .checklist label {
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* STEPS */
+        .steps {
+            counter-reset: step-counter;
+        }
+
+        .step {
+            counter-increment: step-counter;
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 5px solid #667eea;
+        }
+
+        .step-number {
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .step-content h4 {
+            margin-top: 0;
+        }
+
+        /* LAYOUT DIAGRAM */
+        .layout-diagram {
+            background: #f0f0f0;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-size: 0.85em;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            border-top: 1px solid #ddd;
+            text-align: center;
+            color: #666;
+        }
+
+        /* PRINT */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .wrapper {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            a {
+                color: #667eea;
+                text-decoration: none;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .wrapper {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+
+            .layout-diagram {
+                font-size: 0.7em;
+            }
+        }
+
+        /* UTILITY */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+
+        .icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 SGB - Sistema de Gestão de Biblioteca</h1>
+            <p>Guia Completo: Gerenciar Usuários (Consulta, Edição, Inativação)</p>
+            <p style="font-size: 0.9em; margin-top: 10px; opacity: 0.8;">v1.0 | Última atualização: 2024</p>
+        </header>
+
+        <div class="breadcrumb">
+            <strong>Você está em:</strong> 
+            <a href="#inicio">Início</a> 
+            <span>→</span> 
+            <a href="#arquivos">Arquivos</a> 
+            <span>→</span> 
+            <a href="#implementacao">Implementação</a>
+            <span>→</span>
+            <a href="#testes">Testes</a>
+        </div>
+
+        <div class="wrapper">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <h3>📑 Índice</h3>
+                <ul>
+                    <li><a href="#resumo" onclick="scrollToSection(event, 'resumo')">Resumo da Task</a></li>
+                    <li><a href="#arquivos" onclick="scrollToSection(event, 'arquivos')">Arquivos a Mexer</a></li>
+                    <li><a href="#nivel1" onclick="scrollToSection(event, 'nivel1')">Nível 1: BD</a></li>
+                    <li><a href="#nivel2" onclick="scrollToSection(event, 'nivel2')">Nível 2: Dados</a></li>
+                    <li><a href="#nivel3" onclick="scrollToSection(event, 'nivel3')">Nível 3: Formulário</a></li>
+                    <li><a href="#nivel4" onclick="scrollToSection(event, 'nivel4')">Nível 4: Validação</a></li>
+                    <li><a href="#implementacao" onclick="scrollToSection(event, 'implementacao')">Passo a Passo</a></li>
+                    <li><a href="#cuidados" onclick="scrollToSection(event, 'cuidados')">Cuidados</a></li>
+                    <li><a href="#testes" onclick="scrollToSection(event, 'testes')">Testes</a></li>
+                    <li><a href="#checklist" onclick="scrollToSection(event, 'checklist')">Checklist</a></li>
+                </ul>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main>
+                <!-- RESUMO -->
+                <section id="resumo">
+                    <h2>🎯 Resumo da Task</h2>
+                    
+                    <div class="card success">
+                        <h4><span class="icon">✅</span>Funcionalidades a Implementar</h4>
+                        <ul>
+                            <li><strong>Consulta de Usuários:</strong> Listar todos os usuários com filtros</li>
+                            <li><strong>Edição de Usuários:</strong> Alterar nome, email, perfil, tipo</li>
+                            <li><strong>Inativação de Usuários:</strong> Soft delete (não permite mais login)</li>
+                        </ul>
+                    </div>
+
+                    <h3>Contexto Atual</h3>
+                    <p>O formulário <span class="highlight">FrmCadastroUsuario.cs</span> já possui a funcionalidade de <strong>criar novos usuários</strong>. Você precisa estendê-lo para:</p>
+                    <ul>
+                        <li>Exibir uma lista (DataGridView) com todos os usuários cadastrados</li>
+                        <li>Permitir selecionar um usuário e editar seus dados</li>
+                        <li>Permitir inativar usuários (alterar coluna <code>Ativo</code> de 1 para 0)</li>
+                    </ul>
+                </section>
+
+                <!-- ARQUIVOS -->
+                <section id="arquivos">
+                    <h2>📁 Arquivos a Mexer - Visão Geral</h2>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Arquivo</th>
+                                <th>Ação</th>
+                                <th>Prioridade</th>
+                                <th>Tempo Est.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><span class="badge file">schema.sql</span></td>
+                                <td>Adicionar índices</td>
+                                <td><span class="badge priority-high">ALTA</span></td>
+                                <td>5 min</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><span class="badge file">ConexaoBanco.cs</span></td>
+                                <td>Verificar (pode deixar)</td>
+                                <td><span class="badge priority-medium">MÉDIA</span></td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">3</td>
+                                <td><span class="badge file" style="font-weight: bold;">FrmCadastroUsuario.cs</span></td>
+                                <td><strong>PRINCIPAL - Implementar lógica</strong></td>
+                                <td><span class="badge priority-high">ALTA ⭐</span></td>
+                                <td>30 min</td>
+                            </tr>
+                            <tr>
+                                <td style="font-weight: bold;">4</td>
+                                <td><span class="badge file" style="font-weight: bold;">FrmCadastroUsuario.Designer.cs</span></td>
+                                <td><strong>PRINCIPAL - UI (botões, grid)</strong></td>
+                                <td><span class="badge priority-high">ALTA ⭐</span></td>
+                                <td>15 min</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><span class="badge file">App.config</span></td>
+                                <td>Verificar (já OK)</td>
+                                <td><span class="badge priority-low">BAIXA</span></td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="card warning">
+                        <h4><span class="icon">⚠️</span>Atenção</h4>
+                        <p>Os <strong>dois arquivos principais</strong> são <span class="highlight">FrmCadastroUsuario.cs</span> e <span class="highlight">FrmCadastroUsuario.Designer.cs</span>. Você passará ~70% do tempo nesses dois ficheiros.</p>
+                    </div>
+                </section>
+
+                <!-- NÍVEL 1: BD -->
+                <section id="nivel1">
+                    <h2>🗄️ NÍVEL 1: Banco de Dados</h2>
+
+                    <h3>Arquivo: <span class="badge file">SGB/Database/schema.sql</span></h3>
+
+                    <h4>O que mexer?</h4>
+                    <ul>
+                        <li>✅ Tabela <code>Usuarios</code> já tem coluna <code>Ativo</code> (perfeito!)</li>
+                        <li>✅ Adicionar índices para otimizar queries de filtro</li>
+                    </ul>
+
+                    <h4>SQL a Adicionar</h4>
+                    <p>Cole este código <strong>ao final</strong> do arquivo <span class="highlight">schema.sql</span>:</p>
+
+                    <div class="code-block"><span class="comment">-- Índices para performance na tabela Usuarios</span>
+<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> (<span class="keyword">SELECT</span> <span class="string">1</span> <span class="keyword">FROM</span> sys.indexes 
+               <span class="keyword">WHERE</span> <span class="keyword">name</span> = <span class="string">'IX_Usuarios_Email'</span> 
+               <span class="keyword">AND</span> object_id = <span class="keyword">OBJECT_ID</span>(<span class="string">'dbo.Usuarios'</span>))
+<span class="keyword">BEGIN</span>
+    <span class="keyword">CREATE</span> <span class="keyword">INDEX</span> IX_Usuarios_Email <span class="keyword">ON</span> dbo.Usuarios (Email);
+<span class="keyword">END</span>
+<span class="keyword">GO</span>
+
+<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> (<span class="keyword">SELECT</span> <span class="string">1</span> <span class="keyword">FROM</span> sys.indexes 
+               <span class="keyword">WHERE</span> <span class="keyword">name</span> = <span class="string">'IX_Usuarios_Ativo'</span> 
+               <span class="keyword">AND</span> object_id = <span class="keyword">OBJECT_ID</span>(<span class="string">'dbo.Usuarios'</span>))
+<span class="keyword">BEGIN</span>
+    <span class="keyword">CREATE</span> <span class="keyword">INDEX</span> IX_Usuarios_Ativo <span class="keyword">ON</span> dbo.Usuarios (Ativo);
+<span class="keyword">END</span>
+<span class="keyword">GO</span></div>
+
+                    <div class="card success">
+                        <h4><span class="icon">✅</span>Resultado</h4>
+                        <p>Estes índices melhoram a performance das queries que filtram por email ou status ativo/inativo.</p>
+                    </div>
+                </section>
+
+                <!-- NÍVEL 2: CAMADA DADOS -->
+                <section id="nivel2">
+                    <h2>📊 NÍVEL 2: Camada de Dados</h2>
+
+                    <h3>Arquivo: <span class="badge file">SGB/Data/ConexaoBanco.cs</span></h3>
+
+                    <h4>O que fazer?</h4>
+                    <div class="card success">
+                        <p><strong>✅ Deixe como está!</strong> A classe já possui os métodos que você precisa:</p>
+                        <ul>
+                            <li><code>ExecutarConsulta()</code> - para SELECT</li>
+                            <li><code>ExecutarComando()</code> - para INSERT/UPDATE/DELETE</li>
+                            <li><code>ExecutarEmTransacao()</code> - para operações críticas</li>
+                        </ul>
+                    </div>
+
+                    <h4>Por que não mexer?</h4>
+                    <p>A classe está bem estruturada e abstrai a complexidade do acesso ao BD. Modificá-la pode quebrar outras funcionalidades.</p>
+                </section>
+
+                <!-- NÍVEL 3: FORMULÁRIO -->
+                <section id="nivel3">
+                    <h2>🖼️ NÍVEL 3: Formulário (UI + Lógica) ⭐</h2>
+
+                    <h3>Arquivo 1: <span class="badge file">SGB/FrmCadastroUsuario.Designer.cs</span> (UI)</h3>
+
+                    <h4>O que adicionar?</h4>
+                    <p>Você precisa adicionar novos controles no Designer Visual Studio:</p>
+
+                    <ol>
+                        <li><strong>DataGridView</strong> chamado <code>dgvUsuarios</code> (para listar usuários)</li>
+                        <li><strong>Botão</strong> "Editar"</li>
+                        <li><strong>Botão</strong> "Inativar"</li>
+                        <li><strong>Botão</strong> "Limpar"</li>
+                        <li><strong>TextBox</strong> para filtro (opcional)</li>
+                    </ol>
+
+                    <h4>Layout Recomendado</h4>
+                    <div class="layout-diagram">
+┌─ FrmCadastroUsuario ───────────────────────────────┐
+│                                                      │
+│ SEÇÃO 1: Cadastro/Edição                           │
+│ ┌────────────────────────────────────────────────┐ │
+│ │ Nome:      [________________________]           │ │
+│ │ Email:     [________________________]           │ │
+│ │ Perfil:    [Dropdown ▼]                        │ │
+│ │ Tipo:      [Dropdown ▼]                        │ │
+│ │ Senha:     [________________________]           │ │
+│ │                                                 │ │
+│ │ [Cadastrar] [Atualizar] [Limpar]               │ │
+│ └────────────────────────────────────────────────┘ │
+│                                                      │
+│ SEÇÃO 2: Consulta/Edição                           │
+│ ┌────────────────────────────────────────────────┐ │
+│ │ Filtro: [_____________________] [Pesquisar]   │ │
+│ └────────────────────────────────────────────────┘ │
+│ ┌────────────────────────────────────────────────┐ │
+│ │ ┌─ Usuários ──────────────────────────────┐  │ │
+│ │ │ Id │ Nome │ Email │ Perfil │ Ativo │   │  │ │
+│ │ ├────┼──────┼───────┼────────┼───────┤   │  │ │
+│ │ │ 1  │ João │ j@... │ Admin  │   ✓   │   │  │ │
+│ │ │ 2  │ Maria│ m@... │ Usuário│   ✓   │   │  │ │
+│ │ │ 3  │ Pedro│ p@... │ Admin  │   ✗   │   │  │ │
+│ │ └─────────────────────────────────────────┘  │ │
+│ │                                               │ │
+│ │ [Editar] [Inativar] [Reativar] [Atualizar]  │ │
+│ └────────────────────────────────────────────────┘ │
+│                                                      │
+└──────────────────────────────────────────────────────┘</div>
+
+                    <h4>Passos no Designer Visual Studio</h4>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Abrir o Designer</h4>
+                                <p>Clique com botão direito em <code>FrmCadastroUsuario.cs</code> → <strong>View Designer</strong></p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Adicionar DataGridView</h4>
+                                <p>Na Toolbox, procure <strong>DataGridView</strong>, arraste para o formulário. Nomeie como <code>dgvUsuarios</code> (Properties → Name)</p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Adicionar Botões</h4>
+                                <p>Adicione 4 botões:
+                                <ul>
+                                    <li><code>btnEditar</code> - Texto: "Editar"</li>
+                                    <li><code>btnInativar</code> - Texto: "Inativar"</li>
+                                    <li><code>btnReativar</code> - Texto: "Reativar" (opcional)</li>
+                                    <li><code>btnLimpar</code> - Texto: "Limpar"</li>
+                                </ul>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>Adicionar TextBox para Filtro</h4>
+                                <p>Crie um TextBox chamado <code>txtFiltro</code> com Label "Filtro:"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    ---
+
+                    <h3>Arquivo 2: <span class="badge file">SGB/FrmCadastroUsuario.cs</span> (Lógica) ⭐⭐</h3>
+
+                    <h4>Métodos a Implementar</h4>
+
+                    <h4>✅ 1. Método: CarregarUsuarios()</h4>
+                    <p>Busca todos os usuários do BD e exibe na DataGridView.</p>
+
+                    <div class="code-block"><span class="keyword">private void</span> CarregarUsuarios()
+{
+    <span class="keyword">string</span> sql = <span class="string">@"SELECT Id, Nome, Email, Perfil, TipoUsuario, Ativo, DataCadastro 
+                       FROM Usuarios 
+                       ORDER BY Nome"</span>;
+    
+    <span class="keyword">try</span>
+    {
+        DataTable dt = ConexaoBanco.ExecutarConsulta(sql);
+        dgvUsuarios.DataSource = dt;
+        ConfigurarGridUsuarios();
+    }
+    <span class="keyword">catch</span> (Exception ex)
+    {
+        MessageBox.Show(<span class="string">"Erro ao carregar usuários: "</span> + ex.Message);
+    }
+}</div>
+
+                    <h4>✅ 2. Método: ConfigurarGridUsuarios()</h4>
+                    <p>Formata a aparência da DataGridView.</p>
+
+                    <div class="code-block"><span class="keyword">private void</span> ConfigurarGridUsuarios()
+{
+    <span class="keyword">if</span> (dgvUsuarios.Columns.Count == <span class="string">0</span>)
+        <span class="keyword">return</span>;
+
+    dgvUsuarios.Columns[<span class="string">"Id"</span>].Visible = <span class="keyword">false</span>;
+    dgvUsuarios.Columns[<span class="string">"Nome"</span>].HeaderText = <span class="string">"Nome"</span>;
+    dgvUsuarios.Columns[<span class="string">"Email"</span>].HeaderText = <span class="string">"Email"</span>;
+    dgvUsuarios.Columns[<span class="string">"Perfil"</span>].HeaderText = <span class="string">"Perfil"</span>;
+    dgvUsuarios.Columns[<span class="string">"TipoUsuario"</span>].HeaderText = <span class="string">"Tipo"</span>;
+    dgvUsuarios.Columns[<span class="string">"Ativo"</span>].HeaderText = <span class="string">"Ativo?"</span>;
+    dgvUsuarios.Columns[<span class="string">"DataCadastro"</span>].HeaderText = <span class="string">"Cadastrado em"</span>;
+    
+    dgvUsuarios.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+    dgvUsuarios.ReadOnly = <span class="keyword">true</span>;
+    dgvUsuarios.AllowUserToAddRows = <span class="keyword">false</span>;
+    dgvUsuarios.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+}</div>
+
+                    <h4>✅ 3. Evento: FrmCadastroUsuario_Load()</h4>
+                    <p>Executado ao abrir o formulário.</p>
+
+                    <div class="code-block"><span class="keyword">private void</span> FrmCadastroUsuario_Load(<span class="keyword">object</span> sender, EventArgs e)
+{
+    <span class="comment">// Validar permissão - Apenas Admin pode gerenciar usuários</span>
+    <span class="keyword">if</span> (SessaoUsuario.Perfil != <span class="string">"Administrador"</span>)
+    {
+        MessageBox.Show(
+            <span class="string">"Você não tem permissão para acessar esta funcionalidade!"</span>,
+            <span class="string">"Acesso negado"</span>,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+        <span class="keyword">this</span>.Close();
+        <span class="keyword">return</span>;
+    }
+
+    <span class="comment">// Carregar dados</span>
+    CarregarUsuarios();
+    ConfigurarCombos(); <span class="comment">// Se não tiver, criar</span>
+}</div>
+
+                    <h4>✅ 4. Método: ConfigurarCombos()</h4>
+                    <p>Popula os ComboBox de Perfil e Tipo.</p>
+
+                    <div class="code-block"><span class="keyword">private void</span> ConfigurarCombos()
+{
+    cmbPerfil.Items.Clear();
+    cmbPerfil.Items.Add(<span class="string">"Usuario"</span>);
+    cmbPerfil.Items.Add(<span class="string">"Bibliotecario"</span>);
+    cmbPerfil.Items.Add(<span class="string">"Administrador"</span>);
+    cmbPerfil.SelectedIndex = <span class="string">0</span>;
+
+    cmbTipoUsuario.Items.Clear();
+    cmbTipoUsuario.Items.Add(<span class="string">"Aluno"</span>);
+    cmbTipoUsuario.Items.Add(<span class="string">"Professor"</span>);
+    cmbTipoUsuario.Items.Add(<span class="string">"Funcionario"</span>);
+    cmbTipoUsuario.Items.Add(<span class="string">"Externo"</span>);
+    cmbTipoUsuario.SelectedIndex = <span class="string">0</span>;
+}</div>
+
+                    <h4>✅ 5. Botão: btnEditar_Click()</h4>
+                    <p>Permite editar os dados do usuário selecionado.</p>
+
+                    <div class="code-block"><span class="keyword">private void</span> btnEditar_Click(<span class="keyword">object</span> sender, EventArgs e)
+{
+    <span class="keyword">if</span> (dgvUsuarios.CurrentRow == <span class="keyword">null</span>)
+    {
+        MessageBox.Show(<span class="string">"Selecione um usuário para editar."</span>);
+        <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">int</span> usuarioId = Convert.ToInt32(dgvUsuarios.CurrentRow.Cells[<span class="string">"Id"</span>].Value);
+    
+    <span class="string">// Buscar dados do usuário</span>
+    <span class="keyword">string</span> sql = <span class="string">@"SELECT Id, Nome, Email, Perfil, TipoUsuario 
+                       FROM Usuarios 
+                       WHERE Id = @id"</span>;
+    
+    <span class="keyword">var</span> dt = ConexaoBanco.ExecutarConsulta(sql, 
+        <span class="keyword">new</span> SqlParameter(<span class="string">"@id"</span>, usuarioId));
+    
+    <span class="keyword">if</span> (dt.Rows.Count > <span class="string">0</span>)
+    {
+        <span class="keyword">var</span> row = dt.Rows[<span class="string">0</span>];
+        
+        <span class="comment">// Preencher campos</span>
+        txtId.Text = usuarioId.ToString();
+        txtNome.Text = row[<span class="string">"Nome"</span>].ToString();
+        txtEmail.Text = row[<span class="string">"Email"</span>].ToString();
+        cmbPerfil.SelectedItem = row[<span class="string">"Perfil"</span>].ToString();
+        cmbTipoUsuario.SelectedItem = row[<span class="string">"TipoUsuario"</span>].ToString();
+        
+        <span class="comment">// Mudar botão</span>
+        btnCadastrar.Text = <span class="string">"Atualizar"</span>;
+    }
+}</div>
+
+                    <h4>✅ 6. Botão: btnInativar_Click()</h4>
+                    <p>Inativa o usuário selecionado.</p>
+
+                    <div class="code-block"><span class="keyword">private void</span> btnInativar_Click(<span class="keyword">object</span> sender, EventArgs e)
+{
+    <span class="keyword">if</span> (dgvUsuarios.CurrentRow == <span class="keyword">null</span>)
+    {
+        MessageBox.Show(<span class="string">"Selecione um usuário para inativar."</span>);
+        <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">int</span> usuarioId = Convert.ToInt32(dgvUsuarios.CurrentRow.Cells[<span class="string">"Id"</span>].Value);
+    <span class="keyword">string</span> nomeUsuario = dgvUsuarios.CurrentRow.Cells[<span class="string">"Nome"</span>].Value.ToString();
+
+    <span class="comment">// Validação: não permitir inativar a si mesmo</span>
+    <span class="keyword">if</span> (usuarioId == SessaoUsuario.Id)
+    {
+        MessageBox.Show(
+            <span class="string">"Você não pode inativar sua própria conta!"</span>,
+            <span class="string">"Operação não permitida"</span>,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+        <span class="keyword">return</span>;
+    }
+
+    <span class="comment">// Confirmação</span>
+    DialogResult resultado = MessageBox.Show(
+        $<span class="string">"Tem certeza que deseja inativar o usuário '{nomeUsuario}'?\n\n"</span> +
+        <span class="string">"Este usuário não poderá mais fazer login."</span>,
+        <span class="string">"Confirmar inativação"</span>,
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Warning);
+
+    <span class="keyword">if</span> (resultado != DialogResult.Yes)
+        <span class="keyword">return</span>;
+
+    <span class="string">// Executar inativação</span>
+    <span class="keyword">string</span> sql = <span class="string">"UPDATE Usuarios SET Ativo = 0 WHERE Id = @id"</span>;
+
+    <span class="keyword">try</span>
+    {
+        ConexaoBanco.ExecutarComando(sql, 
+            <span class="keyword">new</span> SqlParameter(<span class="string">"@id"</span>, usuarioId));
+        
+        MessageBox.Show(<span class="string">"Usuário inativado com sucesso."</span>);
+        CarregarUsuarios();
+        LimparCampos();
+    }
+    <span class="keyword">catch</span> (Exception ex)
+    {
+        MessageBox.Show(<span class="string">"Erro ao inativar: "</span> + ex.Message);
+    }
+}</div>
+
+                    <h4>✅ 7. Modificar: btnCadastrar_Click()</h4>
+                    <p>Adicione lógica para diferenciar INSERT (novo) de UPDATE (edição).</p>
+
+                    <div class="code-block"><span class="keyword">private void</span> btnCadastrar_Click(<span class="keyword">object</span> sender, EventArgs e)
+{
+    <span class="comment">// Validações existentes...</span>
+    <span class="keyword">if</span> (string.IsNullOrWhiteSpace(txtNome.Text) ||
+        string.IsNullOrWhiteSpace(txtEmail.Text) ||
+        string.IsNullOrWhiteSpace(txtSenha.Text) ||
+        cmbPerfil.SelectedItem == <span class="keyword">null</span> ||
+        cmbTipoUsuario.SelectedItem == <span class="keyword">null</span>)
+    {
+        MessageBox.Show(<span class="string">"Preencha todos os campos."</span>);
+        <span class="keyword">return</span>;
+    }
+
+    <span class="comment">// Verificar se é edição ou novo cadastro</span>
+    <span class="keyword">if</span> (int.TryParse(txtId.Text, <span class="keyword">out int</span> usuarioId) && usuarioId > <span class="string">0</span>)
+    {
+        <span class="comment">// MODO EDIÇÃO - UPDATE</span>
+        AtualizarUsuario(usuarioId);
+    }
+    <span class="keyword">else</span>
+    {
+        <span class="comment">// MODO NOVO - INSERT</span>
+        CadastrarNovoUsuario();
+    }
+}
+
+<span class="keyword">private void</span> AtualizarUsuario(<span class="keyword">int</span> usuarioId)
+{
+    <span class="keyword">string</span> sql = <span class="string">@"UPDATE Usuarios 
+                       SET Nome = @Nome, Email = @Email, Perfil = @Perfil, TipoUsuario = @Tipo
+                       WHERE Id = @Id"</span>;
+
+    <span class="keyword">var</span> parametros = <span class="keyword">new</span>[]
+    {
+        <span class="keyword">new</span> SqlParameter(<span class="string">"@Id"</span>, usuarioId),
+        <span class="keyword">new</span> SqlParameter(<span class="string">"@Nome"</span>, txtNome.Text.Trim()),
+        <span class="keyword">new</span> SqlParameter(<span class="string">"@Email"</span>, txtEmail.Text.Trim()),
+        <span class="keyword">new</span> SqlParameter(<span class="string">"@Perfil"</span>, cmbPerfil.SelectedItem.ToString()),
+        <span class="keyword">new</span> SqlParameter(<span class="string">"@Tipo"</span>, cmbTipoUsuario.SelectedItem.ToString()),
+    };
+
+    <span class="keyword">try</span>
+    {
+        ConexaoBanco.ExecutarComando(sql, parametros);
+        MessageBox.Show(<span class="string">"Usuário atualizado com sucesso."</span>);
+        LimparCampos();
+        CarregarUsuarios();
+    }
+    <span class="keyword">catch</span> (SqlException ex)
+    {
+        MessageBox.Show(<span class="string">"Erro ao atualizar: "</span> + ex.Message);
+    }
+}
+
+<span class="keyword">private void</span> CadastrarNovoUsuario()
+{
+    <span class="comment">// Código existente de INSERT...</span>
+}</div>
+
+                    <h4>✅ 8. Botão: btnLimpar_Click()</h4>
+                    <p>Limpa todos os campos do formulário.</p>
+
+                    <div class="code-block"><span class="keyword">private void</span> btnLimpar_Click(<span class="keyword">object</span> sender, EventArgs e)
+{
+    LimparCampos();
+}
+
+<span class="keyword">private void</span> LimparCampos()
+{
+    txtId.Clear();
+    txtNome.Clear();
+    txtEmail.Clear();
+    txtSenha.Clear();
+    cmbPerfil.SelectedIndex = <span class="string">0</span>;
+    cmbTipoUsuario.SelectedIndex = <span class="string">0</span>;
+    btnCadastrar.Text = <span class="string">"Cadastrar"</span>;
+    txtNome.Focus();
+}</div>
+
+                    <h4>✅ 9. Filtro de Busca (Opcional)</h4>
+                    <p>Permite filtrar usuários em tempo real enquanto digita.</p>
+
+                    <div class="code-block"><span class="keyword">private void</span> txtFiltro_TextChanged(<span class="keyword">object</span> sender, EventArgs e)
+{
+    <span class="keyword">if</span> (dgvUsuarios.DataSource is DataTable dt)
+    {
+        <span class="keyword">string</span> termo = txtFiltro.Text.Trim();
+        
+        <span class="keyword">if</span> (string.IsNullOrEmpty(termo))
+        {
+            dt.DefaultView.RowFilter = <span class="string">""</span>;
+        }
+        <span class="keyword">else</span>
+        {
+            <span class="keyword">string</span> filtro = $<span class="string">"Nome LIKE '%{termo}%' OR Email LIKE '%{termo}%'"</span>;
+            dt.DefaultView.RowFilter = filtro;
+        }
+    }
+}</div>
+
+                </section>
+
+                <!-- NÍVEL 4 -->
+                <section id="nivel4">
+                    <h2>✅ NÍVEL 4: Validações</h2>
+
+                    <h3>Arquivo: <span class="badge file">SGB/App.config</span></h3>
+
+                    <div class="card success">
+                        <p><strong>✅ Já está OK!</strong> Sua connection string está correta.</p>
+                    </div>
+
+                    <p>Se precisar adicionar mais configurações (ex: paths de log), pode adicionar na seção <code>&lt;appSettings&gt;</code>:</p>
+
+                    <div class="code-block"><span class="keyword">&lt;configuration&gt;</span>
+    <span class="keyword">&lt;connectionStrings&gt;</span>
+        <span class="keyword">&lt;add</span> <span class="class-name">name</span>=<span class="string">"SGB"</span> 
+            <span class="class-name">connectionString</span>=<span class="string">"Server=...;Database=SGB;Integrated Security=True;TrustServerCertificate=True"</span> <span class="keyword">/&gt;</span>
+    <span class="keyword">&lt;/connectionStrings&gt;</span>
+    <span class="keyword">&lt;appSettings&gt;</span>
+        <span class="keyword">&lt;add</span> <span class="class-name">key</span>=<span class="string">"LogPath"</span> <span class="class-name">value</span>=<span class="string">".\Logs"</span> <span class="keyword">/&gt;</span>
+        <span class="keyword">&lt;add</span> <span class="class-name">key</span>=<span class="string">"MaxTentativasLogin"</span> <span class="class-name">value</span>=<span class="string">"3"</span> <span class="keyword">/&gt;</span>
+    <span class="keyword">&lt;/appSettings&gt;</span>
+<span class="keyword">&lt;/configuration&gt;</span></div>
+                </section>
+
+                <!-- IMPLEMENTAÇÃO -->
+                <section id="implementacao">
+                    <h2>🚀 Passo a Passo de Implementação</h2>
+
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Preparar Banco de Dados (5 min)</h4>
+                                <p>
+                                    <strong>Arquivo:</strong> <code>SGB/Database/schema.sql</code><br>
+                                    <strong>Ação:</strong> Adicionar os dois índices SQL ao final do arquivo<br>
+                                    <strong>Motivo:</strong> Melhorar performance das queries
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Designer Visual Studio (15 min)</h4>
+                                <p>
+                                    <strong>Arquivo:</strong> <code>SGB/FrmCadastroUsuario.Designer.cs</code><br>
+                                    <strong>Ação:</strong> Adicionar controles via Designer:
+                                </p>
+                                <ul>
+                                    <li>1 DataGridView: <code>dgvUsuarios</code></li>
+                                    <li>4 Botões: Editar, Inativar, Reativar, Limpar</li>
+                                    <li>1 TextBox: <code>txtFiltro</code> (opcional)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Implementar Lógica (30 min)</h4>
+                                <p>
+                                    <strong>Arquivo:</strong> <code>SGB/FrmCadastroUsuario.cs</code><br>
+                                    <strong>Ação:</strong> Copiar e colar os 9 métodos fornecidos acima:
+                                </p>
+                                <ul>
+                                    <li>CarregarUsuarios()</li>
+                                    <li>ConfigurarGridUsuarios()</li>
+                                    <li>ConfigurarCombos()</li>
+                                    <li>FrmCadastroUsuario_Load()</li>
+                                    <li>btnEditar_Click()</li>
+                                    <li>btnInativar_Click()</li>
+                                    <li>btnCadastrar_Click() + AtualizarUsuario()</li>
+                                    <li>btnLimpar_Click() + LimparCampos()</li>
+                                    <li>txtFiltro_TextChanged() (opcional)</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>Compilar e Testar (10 min)</h4>
+                                <p>
+                                    <strong>Ação:</strong> Compilar o projeto e executar os testes
+                                </p>
+                                <div class="card warning">
+                                    <p><strong>⚠️ Se houver erros:</strong></p>
+                                    <ul>
+                                        <li>Verifique se todos os nomes de controles (txtNome, dgvUsuarios, etc) existem no Designer</li>
+                                        <li>Verifique se os eventos estão conectados aos botões</li>
+                                        <li>Verifique a namespaces: <code>using SGB.Data;</code> e <code>using Microsoft.Data.SqlClient;</code></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CUIDADOS -->
+                <section id="cuidados">
+                    <h2>⚠️ Cuidados Importantes</h2>
+
+                    <h3>1. Validar Email Duplicado</h3>
+                    <div class="card error">
+                        <p><strong>PROBLEMA:</strong> Dois usuários podem ter o mesmo email!</p>
+                        <p><strong>SOLUÇÃO:</strong> Antes de fazer UPDATE, verifique se o email já existe:</p>
+                    </div>
+
+                    <div class="code-block"><span class="keyword">private bool</span> VerificaEmailDuplicado(<span class="keyword">string</span> email, <span class="keyword">int</span> usuarioIdExcluir = <span class="string">0</span>)
+{
+    <span class="keyword">string</span> sql = <span class="string">@"SELECT COUNT(*) FROM Usuarios 
+                       WHERE Email = @email AND Ativo = 1"</span>;
+    
+    <span class="keyword">if</span> (usuarioIdExcluir > <span class="string">0</span>)
+        sql += <span class="string">" AND Id != @id"</span>;
+
+    <span class="keyword">var</span> dt = ConexaoBanco.ExecutarConsulta(sql, 
+        <span class="keyword">new</span> SqlParameter(<span class="string">"@email"</span>, email),
+        <span class="keyword">new</span> SqlParameter(<span class="string">"@id"</span>, usuarioIdExcluir));
+
+    <span class="keyword">return</span> Convert.ToInt32(dt.Rows[<span class="string">0</span>][<span class="string">0</span>]) > <span class="string">0</span>;
+}</div>
+
+                    <h3>2. Não Permitir Inativar a Si Mesmo</h3>
+                    <div class="card error">
+                        <p><strong>PROBLEMA:</strong> Um admin pode se inativar e ficar preso!</p>
+                        <p><strong>SOLUÇÃO:</strong> Já implementada no código acima ✅</p>
+                    </div>
+
+                    <h3>3. Validar Permissão de Acesso</h3>
+                    <div class="card error">
+                        <p><strong>PROBLEMA:</strong> Qualquer usuário pode editar outros usuários!</p>
+                        <p><strong>SOLUÇÃO:</strong> Já implementada no evento Load() acima ✅</p>
+                    </div>
+
+                    <h3>4. Não Permitir Editar Email Vazio</h3>
+                    <div class="code-block"><span class="keyword">if</span> (string.IsNullOrWhiteSpace(txtEmail.Text) || 
+        !txtEmail.Text.Contains(<span class="string">"@"</span>))
+{
+    MessageBox.Show(<span class="string">"Email inválido!"</span>);
+    <span class="keyword">return</span>;
+}</div>
+
+                    <h3>5. Registrar Modificações (Auditoria)</h3>
+                    <div class="card warning">
+                        <p><strong>RECOMENDAÇÃO:</strong> Criar tabela de auditoria para registrar quem alterou o quê (funcionalidade futura)</p>
+                    </div>
+                </section>
+
+                <!-- TESTES -->
+                <section id="testes">
+                    <h2>🧪 Estratégia de Testes</h2>
+
+                    <h3>Testes Funcionais</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Teste</th>
+                                <th>Passos</th>
+                                <th>Resultado Esperado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>Listar Usuários</strong></td>
+                                <td>Abrir formulário</td>
+                                <td>DataGridView preenchida com todos os usuários</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><strong>Criar Novo</strong></td>
+                                <td>Preencher campos e clicar "Cadastrar"</td>
+                                <td>Novo usuário aparece na grid</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><strong>Editar Usuário</strong></td>
+                                <td>1) Selecionar na grid<br>2) Clicar "Editar"<br>3) Modificar campo<br>4) Clicar "Atualizar"</td>
+                                <td>Dados atualizados na grid</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td><strong>Inativar Usuário</strong></td>
+                                <td>1) Selecionar na grid<br>2) Clicar "Inativar"<br>3) Confirmar</td>
+                                <td>Coluna "Ativo" muda para FALSE</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td><strong>Login com Inativo</strong></td>
+                                <td>Tentar fazer login com usuário inativado</td>
+                                <td>Login falha (menção: usuário inativo)</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td><strong>Filtro</strong></td>
+                                <td>Digitar nome ou email no filtro</td>
+                                <td>Grid mostra apenas usuários que combinam</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td><strong>Email Duplicado</strong></td>
+                                <td>Tentar editar usuário com email existente</td>
+                                <td>Mensagem de erro: "Email já cadastrado"</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td><strong>Inativar a Si Mesmo</strong></td>
+                                <td>Admin tenta se inativar</td>
+                                <td>Mensagem de erro: "Não pode inativar sua conta"</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td><strong>Usuário Não-Admin</strong></td>
+                                <td>Usuário comum abre gerenciar usuários</td>
+                                <td>Formulário fecha automaticamente</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Testes de Segurança</h3>
+                    <div class="card warning">
+                        <ul>
+                            <li>✅ Verificar se usuários inativos não conseguem fazer login</li>
+                            <li>✅ Verificar se apenas Admin pode gerenciar usuários</li>
+                            <li>✅ Verificar se SQL parametrizado funciona (proteção contra SQL Injection)</li>
+                            <li>✅ Verificar se não é possível editar a própria senha (se necessário, separar em formulário)</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- CHECKLIST -->
+                <section id="checklist">
+                    <h2>✅ Checklist de Implementação</h2>
+
+                    <h3>Fase 1: Preparação</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="c1"><label for="c1">Criar branch Git: <code>feature/gerenciar-usuarios</code></label></li>
+                        <li><input type="checkbox" id="c2"><label for="c2">Ler este documento HTML inteiro</label></li>
+                        <li><input type="checkbox" id="c3"><label for="c3">Abrir projeto em Visual Studio</label></li>
+                    </ul>
+
+                    <h3>Fase 2: Banco de Dados</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="c4"><label for="c4">Adicionar índice <code>IX_Usuarios_Email</code> em schema.sql</label></li>
+                        <li><input type="checkbox" id="c5"><label for="c5">Adicionar índice <code>IX_Usuarios_Ativo</code> em schema.sql</label></li>
+                        <li><input type="checkbox" id="c6"><label for="c6">Verificar connection string em App.config</label></li>
+                    </ul>
+
+                    <h3>Fase 3: UI (Designer)</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="c7"><label for="c7">Abrir FrmCadastroUsuario.Designer.cs em modo visual</label></li>
+                        <li><input type="checkbox" id="c8"><label for="c8">Adicionar DataGridView <code>dgvUsuarios</code></label></li>
+                        <li><input type="checkbox" id="c9"><label for="c9">Adicionar Botão <code>btnEditar</code></label></li>
+                        <li><input type="checkbox" id="c10"><label for="c10">Adicionar Botão <code>btnInativar</code></label></li>
+                        <li><input type="checkbox" id="c11"><label for="c11">Adicionar Botão <code>btnReativar</code> (opcional)</label></li>
+                        <li><input type="checkbox" id="c12"><label for="c12">Adicionar Botão <code>btnLimpar</code></label></li>
+                        <li><input type="checkbox" id="c13"><label for="c13">Adicionar TextBox <code>txtFiltro</code> (opcional)</label></li>
+                    </ul>
+
+                    <h3>Fase 4: Lógica (Code-Behind)</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="c14"><label for="c14">Implementar <code>CarregarUsuarios()</code></label></li>
+                        <li><input type="checkbox" id="c15"><label for="c15">Implementar <code>ConfigurarGridUsuarios()</code></label></li>
+                        <li><input type="checkbox" id="c16"><label for="c16">Implementar <code>ConfigurarCombos()</code></label></li>
+                        <li><input type="checkbox" id="c17"><label for="c17">Implementar evento <code>FrmCadastroUsuario_Load()</code></label></li>
+                        <li><input type="checkbox" id="c18"><label for="c18">Implementar <code>btnEditar_Click()</code></label></li>
+                        <li><input type="checkbox" id="c19"><label for="c19">Implementar <code>btnInativar_Click()</code></label></li>
+                        <li><input type="checkbox" id="c20"><label for="c20">Modificar <code>btnCadastrar_Click()</code> para UPDATE</label></li>
+                        <li><input type="checkbox" id="c21"><label for="c21">Implementar <code>AtualizarUsuario()</code></label></li>
+                        <li><input type="checkbox" id="c22"><label for="c22">Implementar <code>btnLimpar_Click()</code> e <code>LimparCampos()</code></label></li>
+                        <li><input type="checkbox" id="c23"><label for="c23">Implementar <code>txtFiltro_TextChanged()</code> (opcional)</label></li>
+                    </ul>
+
+                    <h3>Fase 5: Validações</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="c24"><label for="c24">Adicionar validação de email duplicado</label></li>
+                        <li><input type="checkbox" id="c25"><label for="c25">Verificar se não permite inativar a si mesmo</label></li>
+                        <li><input type="checkbox" id="c26"><label for="c26">Verificar se apenas Admin acessa o formulário</label></li>
+                        <li><input type="checkbox" id="c27"><label for="c27">Adicionar validação de email (com @)</label></li>
+                    </ul>
+
+                    <h3>Fase 6: Compilação e Testes</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="c28"><label for="c28">Compilar projeto (Ctrl + Shift + B)</label></li>
+                        <li><input type="checkbox" id="c29"><label for="c29">Teste: Listar usuários</label></li>
+                        <li><input type="checkbox" id="c30"><label for="c30">Teste: Criar novo usuário</label></li>
+                        <li><input type="checkbox" id="c31"><label for="c31">Teste: Editar usuário existente</label></li>
+                        <li><input type="checkbox" id="c32"><label for="c32">Teste: Inativar usuário</label></li>
+                        <li><input type="checkbox" id="c33"><label for="c33">Teste: Login com inativo (deve falhar)</label></li>
+                        <li><input type="checkbox" id="c34"><label for="c34">Teste: Filtro de busca</label></li>
+                        <li><input type="checkbox" id="c35"><label for="c35">Teste: Email duplicado</label></li>
+                    </ul>
+
+                    <h3>Fase 7: Finalização</h3>
+                    <ul class="checklist">
+                        <li><input type="checkbox" id="c36"><label for="c36">Fazer commit com mensagem descritiva</label></li>
+                        <li><input type="checkbox" id="c37"><label for="c37">Fazer push da branch (git push origin feature/gerenciar-usuarios)</label></li>
+                        <li><input type="checkbox" id="c38"><label for="c38">Criar Pull Request no GitHub</label></li>
+                        <li><input type="checkbox" id="c39"><label for="c39">Aguardar revisão</label></li>
+                    </ul>
+                </section>
+
+                <!-- COMANDOS GIT -->
+                <section>
+                    <h2>📌 Comandos Git</h2>
+
+                    <h3>Iniciar o trabalho</h3>
+                    <div class="code-block">git checkout -b feature/gerenciar-usuarios</div>
+
+                    <h3>Após terminar a implementação</h3>
+                    <div class="code-block">git add .
+git commit -m "feat: Implementar consulta, edição e inativação de usuários"
+git push origin feature/gerenciar-usuarios</div>
+
+                    <h3>Se precisar sincronizar com main</h3>
+                    <div class="code-block">git fetch origin
+git rebase origin/main
+git push origin feature/gerenciar-usuarios --force-with-lease</div>
+                </section>
+
+                <!-- RESUMO FINAL -->
+                <section>
+                    <h2>🎯 Resumo Final</h2>
+
+                    <div class="card success">
+                        <h4><span class="icon">⭐</span>Você vai conseguir!</h4>
+                        <p>Este guia fornece <strong>100% do código necessário</strong>. Você só precisa:</p>
+                        <ol>
+                            <li>Copiar e colar os snippets de código</li>
+                            <li>Adicionar os controles no Designer</li>
+                            <li>Conectar os eventos</li>
+                            <li>Compilar e testar</li>
+                        </ol>
+                    </div>
+
+                    <h3>Recursos Úteis</h3>
+                    <ul>
+                        <li><a href="https://learn.microsoft.com/en-us/dotnet/desktop/winforms/" target="_blank">📖 Documentação Windows Forms</a></li>
+                        <li><a href="https://github.com/josueBMDMelo/SGB" target="_blank">🔗 Repositório GitHub</a></li>
+                        <li><a href="#" onclick="window.print(); return false;">🖨️ Imprimir este guia</a></li>
+                    </ul>
+
+                    <h3>Tempo Total Estimado</h3>
+                    <div class="card">
+                        <p><strong>⏱️ 1 hora e 15 minutos</strong></p>
+                        <ul>
+                            <li>Banco de dados: 5 min</li>
+                            <li>Designer: 15 min</li>
+                            <li>Lógica: 30 min</li>
+                            <li>Compilação: 5 min</li>
+                            <li>Testes: 20 min</li>
+                        </ul>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <footer>
+            <p><strong>Guia de Implementação - SGB</strong></p>
+            <p>Gerenciar Usuários: Consulta, Edição, Inativação</p>
+            <p style="margin-top: 15px; font-size: 0.9em; color: #999;">
+                Gerado automaticamente | .NET 9 | Windows Forms | SQL Server
+            </p>
+            <p style="margin-top: 10px;">
+                <a href="#inicio" style="color: #667eea; text-decoration: none;">↑ Voltar ao topo</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function scrollToSection(event, sectionId) {
+            event.preventDefault();
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Permitir salvar checklist no localStorage (opcional)
+        document.querySelectorAll('.checklist input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const id = checkbox.id;
+                const checked = checkbox.checked;
+                localStorage.setItem(`sgb_checklist_${id}`, checked);
+            });
+
+            // Restaurar estado do checklist
+            const id = checkbox.id;
+            const checked = localStorage.getItem(`sgb_checklist_${id}`);
+            if (checked === 'true') {
+                checkbox.checked = true;
+            }
+        });
+
+        // Marcar link ativo no sidebar
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

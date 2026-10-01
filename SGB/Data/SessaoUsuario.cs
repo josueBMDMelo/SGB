@@ -18,5 +18,10 @@ namespace SGB.Data
             Nome = nome;
             Perfil = perfil;
         }
+
+        public static bool PodeGerenciarUsuarios()
+        {
+            return Perfil == "Administrador";
+        }
     }
 }
