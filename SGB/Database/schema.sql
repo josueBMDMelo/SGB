@@ -160,14 +160,10 @@ GO
 INSERT INTO dbo.Parametros (Chave, Valor, Descricao)
 SELECT v.Chave, v.Valor, v.Descricao
 FROM (VALUES
-    ('ValorEmprestimoExterno', '5.00', 'Cobranca inicial do usuario externo (R$)'),
-    ('MultaDiaria', '2.00', 'Multa por dia de atraso (R$)')
+    ('ValorEmprestimoExterno', '5.00', 'Cobrança inicial do usuário externo (R$)'),
+    ('MultaDiaria',            '2.00', 'Multa por dia de atraso (R$)')
 ) AS v (Chave, Valor, Descricao)
-WHERE NOT EXISTS (
-    SELECT 1
-    FROM dbo.Parametros p
-    WHERE p.Chave = v.Chave
-);
+WHERE NOT EXISTS (SELECT 1 FROM dbo.Parametros p WHERE p.Chave = v.Chave);
 GO
 
 INSERT INTO dbo.Categorias (Nome)
