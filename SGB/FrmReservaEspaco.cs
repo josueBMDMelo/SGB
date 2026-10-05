@@ -1,9 +1,9 @@
-﻿using Microsoft.Data.SqlClient;
-using SGB.Data;
-using System;
+﻿using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
+using SGB.Data;
 
 namespace SGB
 {
@@ -17,17 +17,14 @@ namespace SGB
         {
             InitializeComponent();
 
-            // Data
             dtpData.Format = DateTimePickerFormat.Custom;
             dtpData.CustomFormat = "dd/MM/yyyy";
             dtpData.ShowUpDown = false;
 
-            // Hora início
             dtpHoraInicio.Format = DateTimePickerFormat.Custom;
             dtpHoraInicio.CustomFormat = "HH:mm";
             dtpHoraInicio.ShowUpDown = true;
 
-            // Hora fim
             dtpHoraFim.Format = DateTimePickerFormat.Custom;
             dtpHoraFim.CustomFormat = "HH:mm";
             dtpHoraFim.ShowUpDown = true;
@@ -35,45 +32,55 @@ namespace SGB
 
         private void FrmReservaEspaco_Load(object sender, EventArgs e)
         {
-            // Somente Bibliotecário e Administrador
-            if (SessaoUsuario.Perfil != "Bibliotecario" &&
-                SessaoUsuario.Perfil != "Administrador")
-            {
-                MessageBox.Show(
-                    "Você não possui permissão para acessar o gerenciamento de reservas.",
-                    "Acesso negado",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-
-                Close();
+            if (!ControleAcesso.ValidarAcesso(this, "Usuario", "Bibliotecario", "Administrador"))
                 return;
-            }
 
             ConfigurarFiltros();
-            CarregarUsuarios();
             CarregarEspacos();
+            ConfigurarInterfacePorPerfil();
             CarregarReservas();
+        }
+
+        private void ConfigurarInterfacePorPerfil()
+        {
+            if (ControleAcesso.EhUsuarioComum())
+            {
+                cmbUsuario.Enabled = false;
+                _usuarios = ConexaoBanco.ExecutarConsulta(@"
+                    SELECT Id, Nome 
+                    FROM Usuarios 
+                    WHERE Id = @Id",
+                    new SqlParameter("@Id", SessaoUsuario.Id));
+
+                cmbUsuario.DataSource = _usuarios;
+                cmbUsuario.DisplayMember = "Nome";
+                cmbUsuario.ValueMember = "Id";
+
+                btnConcluirReserva.Visible = false;
+            }
+            else
+            {
+                cmbUsuario.Enabled = true;
+                CarregarUsuarios();
+                btnConcluirReserva.Visible = true;
+            }
         }
 
         private void ConfigurarFiltros()
         {
             cmbFiltroStatus.Items.Clear();
-
             cmbFiltroStatus.Items.Add("Todos");
             cmbFiltroStatus.Items.Add("Pendente");
             cmbFiltroStatus.Items.Add("Confirmada");
             cmbFiltroStatus.Items.Add("Cancelada");
             cmbFiltroStatus.Items.Add("Concluida");
-
             cmbFiltroStatus.SelectedIndex = 0;
         }
 
         private void CarregarUsuarios()
         {
             _usuarios = ConexaoBanco.ExecutarConsulta(@"
-                SELECT
-                    Id,
-                    Nome
+                SELECT Id, Nome
                 FROM Usuarios
                 WHERE Ativo = 1
                 ORDER BY Nome");
@@ -87,9 +94,7 @@ namespace SGB
         private void CarregarEspacos()
         {
             _espacos = ConexaoBanco.ExecutarConsulta(@"
-                SELECT
-                    Id,
-                    Nome
+                SELECT Id, Nome
                 FROM Espacos
                 WHERE Ativo = 1
                 ORDER BY Nome");
@@ -109,15 +114,24 @@ namespace SGB
                     e.Nome AS Espaco,
                     r.DataHoraInicio,
                     r.DataHoraFim,
-                    r.Status
+                    r.Status,
+                    r.UsuarioId
                 FROM ReservasEspaco r
-                INNER JOIN Usuarios u
-                    ON r.UsuarioId = u.Id
-                INNER JOIN Espacos e
-                    ON r.EspacoId = e.Id
-                ORDER BY r.DataHoraInicio DESC";
+                INNER JOIN Usuarios u ON r.UsuarioId = u.Id
+                INNER JOIN Espacos e  ON r.EspacoId = e.Id";
 
-            _reservas = ConexaoBanco.ExecutarConsulta(sql);
+            if (ControleAcesso.EhUsuarioComum())
+            {
+                sql += " WHERE r.UsuarioId = @UsuarioLogadoId";
+            }
+
+            sql += " ORDER BY r.DataHoraInicio DESC";
+
+            var parametros = ControleAcesso.EhUsuarioComum()
+                ? new[] { new SqlParameter("@UsuarioLogadoId", SessaoUsuario.Id) }
+                : Array.Empty<SqlParameter>();
+
+            _reservas = ConexaoBanco.ExecutarConsulta(sql, parametros);
 
             dgvMinhasReservas.DataSource = _reservas.DefaultView;
 
@@ -131,85 +145,67 @@ namespace SGB
                 return;
 
             dgvMinhasReservas.Columns["Id"].Visible = false;
+            if (dgvMinhasReservas.Columns.Contains("UsuarioId"))
+                dgvMinhasReservas.Columns["UsuarioId"].Visible = false;
 
-            dgvMinhasReservas.Columns["Usuario"].HeaderText =
-                "Usuário";
+            dgvMinhasReservas.Columns["Usuario"].HeaderText = "Usuário";
+            dgvMinhasReservas.Columns["Espaco"].HeaderText = "Espaço";
+            dgvMinhasReservas.Columns["DataHoraInicio"].HeaderText = "Início";
+            dgvMinhasReservas.Columns["DataHoraFim"].HeaderText = "Fim";
+            dgvMinhasReservas.Columns["Status"].HeaderText = "Status";
 
-            dgvMinhasReservas.Columns["Espaco"].HeaderText =
-                "Espaço";
+            dgvMinhasReservas.Columns["DataHoraInicio"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
+            dgvMinhasReservas.Columns["DataHoraFim"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
 
-            dgvMinhasReservas.Columns["DataHoraInicio"].HeaderText =
-                "Início";
-
-            dgvMinhasReservas.Columns["DataHoraFim"].HeaderText =
-                "Fim";
-
-            dgvMinhasReservas.Columns["Status"].HeaderText =
-                "Status";
-
-            dgvMinhasReservas.Columns["DataHoraInicio"]
-                .DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
-
-            dgvMinhasReservas.Columns["DataHoraFim"]
-                .DefaultCellStyle.Format = "dd/MM/yyyy HH:mm";
-
-            dgvMinhasReservas.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
-
+            dgvMinhasReservas.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvMinhasReservas.RowHeadersVisible = false;
             dgvMinhasReservas.ReadOnly = true;
             dgvMinhasReservas.AllowUserToAddRows = false;
             dgvMinhasReservas.MultiSelect = false;
-
-            dgvMinhasReservas.SelectionMode =
-                DataGridViewSelectionMode.FullRowSelect;
+            dgvMinhasReservas.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
 
         private void btnReservar_Click(object sender, EventArgs e)
         {
-            if (cmbUsuario.SelectedValue == null)
-            {
-                MostrarMensagem(
-                    "Selecione o usuário para quem a reserva será feita.",
-                    Color.Red);
+            int usuarioId;
 
-                return;
+            if (ControleAcesso.EhUsuarioComum())
+            {
+                usuarioId = SessaoUsuario.Id;
+            }
+            else
+            {
+                if (cmbUsuario.SelectedValue == null)
+                {
+                    MostrarMensagem("Selecione o usuário para quem a reserva será feita.", Color.Red);
+                    return;
+                }
+                usuarioId = Convert.ToInt32(cmbUsuario.SelectedValue);
             }
 
             if (cmbEspaco.SelectedValue == null)
             {
-                MostrarMensagem(
-                    "Selecione um espaço.",
-                    Color.Red);
-
+                MostrarMensagem("Selecione um espaço.", Color.Red);
                 return;
             }
 
-            int usuarioId =
-                Convert.ToInt32(cmbUsuario.SelectedValue);
+            int espacoId = Convert.ToInt32(cmbEspaco.SelectedValue);
 
-            int espacoId =
-                Convert.ToInt32(cmbEspaco.SelectedValue);
+            DateTime inicio = dtpData.Value.Date + dtpHoraInicio.Value.TimeOfDay;
+            DateTime fim = dtpData.Value.Date + dtpHoraFim.Value.TimeOfDay;
 
-            DateTime inicio =
-                dtpData.Value.Date +
-                dtpHoraInicio.Value.TimeOfDay;
+            if (inicio < DateTime.Now)
+            {
+                MostrarMensagem("Não é permitido agendar reservas em data ou horário retroativo.", Color.Red);
+                return;
+            }
 
-            DateTime fim =
-                dtpData.Value.Date +
-                dtpHoraFim.Value.TimeOfDay;
-
-            // Verifica horário
             if (fim <= inicio)
             {
-                MostrarMensagem(
-                    "A hora final deve ser maior que a hora inicial.",
-                    Color.Red);
-
+                MostrarMensagem("A hora final deve ser maior que a hora inicial.", Color.Red);
                 return;
             }
 
-            // Verifica conflito de horário
             var conflito = ConexaoBanco.ExecutarConsulta(@"
                 SELECT 1
                 FROM ReservasEspaco
@@ -223,39 +219,19 @@ namespace SGB
 
             if (conflito.Rows.Count > 0)
             {
-                MostrarMensagem(
-                    "O espaço já possui uma reserva nesse horário.",
-                    Color.Red);
-
+                MostrarMensagem("O espaço já possui uma reserva confirmada ou pendente nesse horário.", Color.Red);
                 return;
             }
 
-            // Cria a reserva
             ConexaoBanco.ExecutarComando(@"
-                INSERT INTO ReservasEspaco
-                (
-                    UsuarioId,
-                    EspacoId,
-                    DataHoraInicio,
-                    DataHoraFim,
-                    Status
-                )
-                VALUES
-                (
-                    @usuarioId,
-                    @espacoId,
-                    @inicio,
-                    @fim,
-                    'Confirmada'
-                )",
+                INSERT INTO ReservasEspaco (UsuarioId, EspacoId, DataHoraInicio, DataHoraFim, Status)
+                VALUES (@usuarioId, @espacoId, @inicio, @fim, 'Confirmada')",
                 new SqlParameter("@usuarioId", usuarioId),
                 new SqlParameter("@espacoId", espacoId),
                 new SqlParameter("@inicio", inicio),
                 new SqlParameter("@fim", fim));
 
-            MostrarMensagem(
-                "Reserva realizada com sucesso.",
-                Color.Green);
+            MostrarMensagem("Reserva realizada com sucesso.", Color.Green);
 
             LimparCampos();
             CarregarReservas();
@@ -265,36 +241,22 @@ namespace SGB
         {
             if (dgvMinhasReservas.CurrentRow == null)
             {
-                MostrarMensagem(
-                    "Selecione uma reserva para cancelar.",
-                    Color.Red);
-
+                MostrarMensagem("Selecione uma reserva para cancelar.", Color.Red);
                 return;
             }
 
-            int reservaId = Convert.ToInt32(
-                dgvMinhasReservas.CurrentRow.Cells["Id"].Value);
+            int reservaId = Convert.ToInt32(dgvMinhasReservas.CurrentRow.Cells["Id"].Value);
+            string status = Convert.ToString(dgvMinhasReservas.CurrentRow.Cells["Status"].Value);
 
-            string status = Convert.ToString(
-                dgvMinhasReservas.CurrentRow.Cells["Status"].Value);
-
-            // Não permite cancelar uma reserva já concluída
             if (status == "Concluida")
             {
-                MostrarMensagem(
-                    "Uma reserva concluída não pode ser cancelada.",
-                    Color.Red);
-
+                MostrarMensagem("Uma reserva concluída não pode ser cancelada.", Color.Red);
                 return;
             }
 
-            // Não permite cancelar uma reserva já cancelada
             if (status == "Cancelada")
             {
-                MostrarMensagem(
-                    "Essa reserva já está cancelada.",
-                    Color.Red);
-
+                MostrarMensagem("Essa reserva já está cancelada.", Color.Red);
                 return;
             }
 
@@ -308,23 +270,16 @@ namespace SGB
                 return;
 
             ConexaoBanco.ExecutarComando(@"
-        UPDATE ReservasEspaco
-        SET Status = 'Cancelada'
-        WHERE Id = @id
-          AND Status = 'Confirmada'",
+                UPDATE ReservasEspaco
+                SET Status = 'Cancelada'
+                WHERE Id = @id AND Status IN ('Pendente', 'Confirmada')",
                 new SqlParameter("@id", reservaId));
 
-            MostrarMensagem(
-                "Reserva cancelada com sucesso.",
-                Color.Green);
-
+            MostrarMensagem("Reserva cancelada com sucesso.", Color.Green);
             CarregarReservas();
         }
 
-
-        private void cmbFiltroStatus_SelectedIndexChanged(
-            object sender,
-            EventArgs e)
+        private void cmbFiltroStatus_SelectedIndexChanged(object sender, EventArgs e)
         {
             AplicarFiltro();
         }
@@ -335,40 +290,26 @@ namespace SGB
                 return;
 
             var view = _reservas.DefaultView;
-
             string filtro = cmbFiltroStatus.SelectedItem?.ToString();
 
-            switch (filtro)
+            view.RowFilter = filtro switch
             {
-                case "Pendente":
-                    view.RowFilter = "Status = 'Pendente'";
-                    break;
-
-                case "Confirmada":
-                    view.RowFilter = "Status = 'Confirmada'";
-                    break;
-
-                case "Cancelada":
-                    view.RowFilter = "Status = 'Cancelada'";
-                    break;
-
-                case "Concluida":
-                    view.RowFilter = "Status = 'Concluida'";
-                    break;
-
-                default:
-                    view.RowFilter = "";
-                    break;
-            }
+                "Pendente" => "Status = 'Pendente'",
+                "Confirmada" => "Status = 'Confirmada'",
+                "Cancelada" => "Status = 'Cancelada'",
+                "Concluida" => "Status = 'Concluida'",
+                _ => "",
+            };
         }
-
-
 
         private void LimparCampos()
         {
-            cmbUsuario.SelectedIndex = -1;
-            cmbEspaco.SelectedIndex = -1;
+            if (!ControleAcesso.EhUsuarioComum())
+            {
+                cmbUsuario.SelectedIndex = -1;
+            }
 
+            cmbEspaco.SelectedIndex = -1;
             dtpData.Value = DateTime.Now;
             dtpHoraInicio.Value = DateTime.Now;
             dtpHoraFim.Value = DateTime.Now.AddHours(1);
@@ -382,36 +323,29 @@ namespace SGB
 
         private void btnConcluirReserva_Click(object sender, EventArgs e)
         {
-            if (dgvMinhasReservas.CurrentRow == null)
+            if (ControleAcesso.EhUsuarioComum())
             {
-                MostrarMensagem(
-                    "Selecione uma reserva para concluir.",
-                    Color.Red);
-
+                MostrarMensagem("Apenas a equipe da biblioteca pode concluir reservas de salas.", Color.Red);
                 return;
             }
 
-            int reservaId = Convert.ToInt32(
-                dgvMinhasReservas.CurrentRow.Cells["Id"].Value);
+            if (dgvMinhasReservas.CurrentRow == null)
+            {
+                MostrarMensagem("Selecione uma reserva para concluir.", Color.Red);
+                return;
+            }
 
-            string status = Convert.ToString(
-                dgvMinhasReservas.CurrentRow.Cells["Status"].Value);
+            int reservaId = Convert.ToInt32(dgvMinhasReservas.CurrentRow.Cells["Id"].Value);
+            string status = Convert.ToString(dgvMinhasReservas.CurrentRow.Cells["Status"].Value);
 
-            // Só permite concluir reservas confirmadas
             if (status != "Confirmada")
             {
-                MostrarMensagem(
-                    "Somente reservas confirmadas podem ser concluídas.",
-                    Color.Red);
-
+                MostrarMensagem("Somente reservas confirmadas podem ser concluídas.", Color.Red);
                 return;
             }
 
             DialogResult resultado = MessageBox.Show(
-                "Tem certeza que deseja concluir esta reserva?\n\n" +
-                "Isso irá marcar a sala como concluída e ela estará " +
-                "liberada para outra reserva.\n\n" +
-                "Esta ação não pode ser desfeita.",
+                "Tem certeza que deseja concluir esta reserva?\n\nIsso irá marcar a sala como concluída e ela estará liberada para outra reserva.\n\nEsta ação não pode ser desfeita.",
                 "Concluir reserva",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Warning);
@@ -420,26 +354,19 @@ namespace SGB
                 return;
 
             ConexaoBanco.ExecutarComando(@"
-        UPDATE ReservasEspaco
-        SET Status = 'Concluida'
-        WHERE Id = @id
-          AND Status = 'Confirmada'",
+                UPDATE ReservasEspaco
+                SET Status = 'Concluida'
+                WHERE Id = @id AND Status = 'Confirmada'",
                 new SqlParameter("@id", reservaId));
 
-            MostrarMensagem(
-                "Reserva concluída com sucesso. O espaço está liberado para nova reserva.",
-                Color.Green);
-
+            MostrarMensagem("Reserva concluída com sucesso. O espaço está liberado.", Color.Green);
             CarregarReservas();
         }
 
         private void btnAtualizar_Click(object sender, EventArgs e)
         {
             CarregarReservas();
-
-            MostrarMensagem(
-                "Lista de reservas atualizada.",
-                Color.Green);
+            MostrarMensagem("Lista de reservas atualizada.", Color.Green);
         }
     }
 }

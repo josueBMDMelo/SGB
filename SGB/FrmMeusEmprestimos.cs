@@ -1,13 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using SGB.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SGB
@@ -23,6 +17,19 @@ namespace SGB
 
         private void FrmMeusEmprestimos_Load(object sender, EventArgs e)
         {
+            // Valida se há qualquer usuário autenticado (RF01 / RN01)
+            if (!ControleAcesso.ValidarAcesso(this, "Usuario", "Bibliotecario", "Administrador"))
+                return;
+
+            if (SessaoUsuario.Id <= 0)
+            {
+                MessageBox.Show("Identificador de usuário inválido na sessão.", "Acesso Negado",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                Close();
+                return;
+            }
+
+            cmbFiltro.Items.Clear();
             cmbFiltro.Items.AddRange(new object[] { "Todos", "Em aberto", "Atrasados", "Devolvidos" });
             cmbFiltro.SelectedIndex = 0;
 
@@ -60,6 +67,9 @@ namespace SGB
 
         private void ConfigurarGrid()
         {
+            if (dgvEmprestimos.Columns.Count == 0)
+                return;
+
             dgvEmprestimos.Columns["Id"].Visible = false;
             dgvEmprestimos.Columns["Livro"].HeaderText = "Livro";
             dgvEmprestimos.Columns["Patrimonio"].HeaderText = "Patrimônio";
@@ -67,10 +77,13 @@ namespace SGB
             dgvEmprestimos.Columns["DataPrevistaDevolucao"].HeaderText = "Devolução prevista";
             dgvEmprestimos.Columns["DataDevolucao"].HeaderText = "Devolvido em";
             dgvEmprestimos.Columns["StatusAtual"].HeaderText = "Status";
+
             dgvEmprestimos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvEmprestimos.RowHeadersVisible = false;
             dgvEmprestimos.ReadOnly = true;
             dgvEmprestimos.AllowUserToAddRows = false;
+            dgvEmprestimos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvEmprestimos.MultiSelect = false;
         }
 
         private void cmbFiltro_SelectedIndexChanged(object sender, EventArgs e)
@@ -80,6 +93,9 @@ namespace SGB
 
         private void AplicarFiltro()
         {
+            if (_emprestimos == null)
+                return;
+
             var view = _emprestimos.DefaultView;
 
             view.RowFilter = cmbFiltro.SelectedItem?.ToString() switch
@@ -92,4 +108,3 @@ namespace SGB
         }
     }
 }
-
