@@ -19,12 +19,26 @@ namespace SGB
 
         private void AplicarPermissoesDoPerfil()
         {
-            bool podeGerenciar = _perfil is "Bibliotecario" or "Administrador";
+            bool ehAdmin = ControleAcesso.EhAdmin();
+            bool ehOperador = ControleAcesso.EhBibliotecario() || ehAdmin;
 
-            usuariosToolStripMenuItem.Visible = podeGerenciar;
-            // ajuste os nomes abaixo para os itens reais do seu menuStrip1:
-            // cadastroLivroToolStripMenuItem.Visible = podeGerenciar;
-            // cadastroExemplarToolStripMenuItem.Visible = podeGerenciar;
+            // Gestão de Sistema e Cadastros Base (Apenas Administrador)
+            usuariosToolStripMenuItem.Visible = ehAdmin;
+            espacosToolStripMenuItem.Visible = ehAdmin;
+
+            // Balcão de Atendimento e Gestão do Acervo (Bibliotecário e Administrador)
+            livrosToolStripMenuItem.Visible = ehOperador;
+            exemplaresToolStripMenuItem.Visible = ehOperador;
+            realizarEmprestimoToolStripMenuItem.Visible = ehOperador;
+            devolucoesToolStripMenuItem.Visible = ehOperador;
+            emprestimosRealizadosToolStripMenuItem.Visible = ehOperador;
+
+            // Autosserviço e Consultas Pessoais (Todos os perfis)
+            meusEmprestimosToolStripMenuItem.Visible = true;
+            reservaDeEspacosToolStripMenuItem.Visible = true;
+
+            // Menu Sessão (Logout / Sair do sistema - liberado para todos)
+            sessaoToolStripMenuItem.Visible = true;
         }
 
         private void usuariosToolStripMenuItem_Click(object sender, EventArgs e)
