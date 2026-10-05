@@ -1,13 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using SGB.Data;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SGB
@@ -21,21 +15,32 @@ namespace SGB
 
         private void FrmCadastroEspaco_Load(object sender, EventArgs e)
         {
+            // Valida permissão estrita de Administrador (RF02 / RF06)
+            if (!ControleAcesso.ValidarAcesso(this, "Administrador"))
+                return;
+
             CarregarEspacos();
         }
 
         private void btnCadastrar_Click(object sender, EventArgs e)
         {
+            if (!ControleAcesso.EhAdmin())
+            {
+                MessageBox.Show("Apenas administradores podem cadastrar espaços.",
+                                "Acesso Negado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if (string.IsNullOrWhiteSpace(txtNome.Text))
             {
-                MessageBox.Show("Informe o nome do espaço.");
+                MessageBox.Show("Informe o nome do espaço.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtNome.Focus();
                 return;
             }
 
             if (!int.TryParse(txtCapacidade.Text, out int capacidade) || capacidade <= 0)
             {
-                MessageBox.Show("Informe uma capacidade válida maior que zero.");
+                MessageBox.Show("Informe uma capacidade válida maior que zero.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtCapacidade.Focus();
                 return;
             }
@@ -67,14 +72,14 @@ namespace SGB
             {
                 ConexaoBanco.ExecutarComando(sql, parametros);
 
-                MessageBox.Show("Espaço cadastrado com sucesso.");
+                MessageBox.Show("Espaço cadastrado com sucesso.", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 LimparCampos();
                 CarregarEspacos();
             }
             catch (SqlException ex)
             {
-                MessageBox.Show("Não foi possível cadastrar o espaço: " + ex.Message);
+                MessageBox.Show("Não foi possível cadastrar o espaço: " + ex.Message, "Erro de Banco", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -103,6 +108,9 @@ namespace SGB
 
         private void ConfigurarGrid()
         {
+            if (dgvEspacos.Columns.Count == 0)
+                return;
+
             dgvEspacos.Columns["Id"].Visible = false;
 
             dgvEspacos.Columns["Nome"].HeaderText = "Nome";
@@ -110,14 +118,11 @@ namespace SGB
             dgvEspacos.Columns["Localizacao"].HeaderText = "Localização";
             dgvEspacos.Columns["Capacidade"].HeaderText = "Capacidade";
 
-            dgvEspacos.AutoSizeColumnsMode =
-                DataGridViewAutoSizeColumnsMode.Fill;
-
+            dgvEspacos.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvEspacos.RowHeadersVisible = false;
             dgvEspacos.AllowUserToAddRows = false;
             dgvEspacos.AllowUserToDeleteRows = false;
-            dgvEspacos.SelectionMode =
-                DataGridViewSelectionMode.FullRowSelect;
+            dgvEspacos.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvEspacos.MultiSelect = false;
         }
 
