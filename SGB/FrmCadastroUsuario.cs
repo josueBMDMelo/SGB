@@ -8,6 +8,7 @@ namespace SGB
 {
     public partial class FrmCadastroUsuario : Form
     {
+        private int? _usuarioIdSelecionado = null;
         public FrmCadastroUsuario()
         {
             InitializeComponent();
@@ -320,9 +321,11 @@ namespace SGB
             if (gridUsuarios.CurrentRow == null || gridUsuarios.CurrentRow.Index < 0) return;
 
             var row = gridUsuarios.CurrentRow;
+            _usuarioIdSelecionado = Convert.ToInt32(row.Cells["Id"].Value); // <-- Guarda o ID
+
             txtNomeEdicao.Text = row.Cells["Nome"].Value?.ToString() ?? "";
             txtEmailEdicao.Text = row.Cells["Email"].Value?.ToString() ?? "";
-            txtSenhaEdicao.Clear(); // Senha não é exibida por segurança
+            txtSenhaEdicao.Clear(); 
 
             string perfil = row.Cells["Perfil"].Value?.ToString() ?? "";
             string tipo = row.Cells["TipoUsuario"].Value?.ToString() ?? "";
@@ -370,7 +373,7 @@ namespace SGB
             {
                 bool querAlterarSenha = !string.IsNullOrWhiteSpace(txtSenhaEdicao.Text);
 
-                // 1. Se digitou senha nova, atualiza SenhaHash. Se deixou em branco, mantém a antiga.
+                // Se informou senha nova, atualiza SenhaHash. Se não informou, mantém a existente no banco.
                 string sql = querAlterarSenha
                     ? @"UPDATE dbo.Usuarios 
                 SET Nome = @nome, Email = @email, Perfil = @perfil, TipoUsuario = @tipo, SenhaHash = @hash 
@@ -379,28 +382,28 @@ namespace SGB
                 SET Nome = @nome, Email = @email, Perfil = @perfil, TipoUsuario = @tipo 
                 WHERE Id = @id";
 
-                // 2. Parâmetros obrigatórios
-                var parametros = new []
-        {
-            new SqlParameter("@nome", txtNomeEdicao.Text.Trim()),
-            new SqlParameter("@email", email),
-            new SqlParameter("@perfil", cmbPerfilEdicao.SelectedItem!.ToString()),
-            new SqlParameter("@tipo", cmbBoxEdicao.SelectedItem!.ToString())
-        };
+                var parametros = new List<SqlParameter>
+                {
+                    new SqlParameter("@id", _usuarioIdSelecionado.Value),
+                    new SqlParameter("@nome", txtNomeEdicao.Text.Trim()),
+                    new SqlParameter("@email", email),
+                    new SqlParameter("@perfil", cmbPerfilEdicao.SelectedItem!.ToString()),
+                    new SqlParameter("@tipo", cmbBoxEdicao.SelectedItem!.ToString())
+                };
 
-                // 3. Adiciona o @hash APENAS se o comando SQL pedir a troca de senha
+                // Adiciona o parâmetro @hash de fato à lista
                 if (querAlterarSenha)
                 {
                     string novoHash = BCrypt.Net.BCrypt.HashPassword(txtSenhaEdicao.Text.Trim());
-                    parametros.Append(new SqlParameter("@hash", novoHash));
+                    parametros.Add(new SqlParameter("@hash", novoHash));
                 }
 
-                // 4. Executa
                 ConexaoBanco.ExecutarComando(sql, parametros.ToArray());
 
                 MessageBox.Show("Usuário atualizado com sucesso!", "Sucesso", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 CarregarUsuarios();
                 LimparCamposEdicao();
+                _usuarioIdSelecionado = null;
             }
             catch (Exception ex)
             {
