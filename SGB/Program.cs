@@ -22,7 +22,7 @@ namespace SGB
                 return;
             }
 
-            Application.Run(new FrmLogin());
+            Application.Run(new FrmDevolucao());
         }
     }
 }

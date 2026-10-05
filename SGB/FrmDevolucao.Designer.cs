@@ -45,7 +45,7 @@
             // cmbFiltro
             // 
             cmbFiltro.FormattingEnabled = true;
-            cmbFiltro.Location = new Point(176, 12);
+            cmbFiltro.Location = new Point(229, 12);
             cmbFiltro.Name = "cmbFiltro";
             cmbFiltro.Size = new Size(121, 23);
             cmbFiltro.TabIndex = 0;
@@ -53,14 +53,14 @@
             // dgvEmprestimosAbertos
             // 
             dgvEmprestimosAbertos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvEmprestimosAbertos.Location = new Point(318, 112);
+            dgvEmprestimosAbertos.Location = new Point(205, 94);
             dgvEmprestimosAbertos.Name = "dgvEmprestimosAbertos";
-            dgvEmprestimosAbertos.Size = new Size(240, 150);
+            dgvEmprestimosAbertos.Size = new Size(567, 168);
             dgvEmprestimosAbertos.TabIndex = 1;
             // 
             // btnSelecionar
             // 
-            btnSelecionar.Location = new Point(347, 38);
+            btnSelecionar.Location = new Point(697, 47);
             btnSelecionar.Name = "btnSelecionar";
             btnSelecionar.Size = new Size(75, 23);
             btnSelecionar.TabIndex = 2;
@@ -71,7 +71,7 @@
             // lblLivro
             // 
             lblLivro.AutoSize = true;
-            lblLivro.Location = new Point(61, 38);
+            lblLivro.Location = new Point(12, 55);
             lblLivro.Name = "lblLivro";
             lblLivro.Size = new Size(46, 15);
             lblLivro.TabIndex = 3;
@@ -80,7 +80,7 @@
             // lblUsuario
             // 
             lblUsuario.AutoSize = true;
-            lblUsuario.Location = new Point(61, 55);
+            lblUsuario.Location = new Point(12, 11);
             lblUsuario.Name = "lblUsuario";
             lblUsuario.Size = new Size(60, 15);
             lblUsuario.TabIndex = 4;
@@ -89,7 +89,7 @@
             // lblDiasAtraso
             // 
             lblDiasAtraso.AutoSize = true;
-            lblDiasAtraso.Location = new Point(61, 70);
+            lblDiasAtraso.Location = new Point(12, 94);
             lblDiasAtraso.Name = "lblDiasAtraso";
             lblDiasAtraso.Size = new Size(76, 15);
             lblDiasAtraso.TabIndex = 5;
@@ -98,7 +98,7 @@
             // lblValorMulta
             // 
             lblValorMulta.AutoSize = true;
-            lblValorMulta.Location = new Point(61, 94);
+            lblValorMulta.Location = new Point(11, 129);
             lblValorMulta.Name = "lblValorMulta";
             lblValorMulta.Size = new Size(77, 15);
             lblValorMulta.TabIndex = 6;
@@ -107,16 +107,17 @@
             // chkMultaPaga
             // 
             chkMultaPaga.AutoSize = true;
-            chkMultaPaga.Location = new Point(61, 112);
+            chkMultaPaga.Location = new Point(12, 169);
             chkMultaPaga.Name = "chkMultaPaga";
             chkMultaPaga.Size = new Size(138, 19);
             chkMultaPaga.TabIndex = 7;
             chkMultaPaga.Text = "Multa recebida agora";
             chkMultaPaga.UseVisualStyleBackColor = true;
+            chkMultaPaga.Visible = false;
             // 
             // btnConfirmarDevolucao
             // 
-            btnConfirmarDevolucao.Location = new Point(156, 293);
+            btnConfirmarDevolucao.Location = new Point(606, 283);
             btnConfirmarDevolucao.Name = "btnConfirmarDevolucao";
             btnConfirmarDevolucao.Size = new Size(166, 23);
             btnConfirmarDevolucao.TabIndex = 8;
@@ -127,7 +128,7 @@
             // labelMensagem
             // 
             labelMensagem.AutoSize = true;
-            labelMensagem.Location = new Point(61, 203);
+            labelMensagem.Location = new Point(12, 203);
             labelMensagem.Name = "labelMensagem";
             labelMensagem.Size = new Size(79, 15);
             labelMensagem.TabIndex = 9;
@@ -135,7 +136,7 @@
             // 
             // btnFiltrar
             // 
-            btnFiltrar.Location = new Point(347, 9);
+            btnFiltrar.Location = new Point(697, 11);
             btnFiltrar.Name = "btnFiltrar";
             btnFiltrar.Size = new Size(75, 23);
             btnFiltrar.TabIndex = 10;
@@ -147,7 +148,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(800, 341);
             Controls.Add(btnFiltrar);
             Controls.Add(labelMensagem);
             Controls.Add(btnConfirmarDevolucao);

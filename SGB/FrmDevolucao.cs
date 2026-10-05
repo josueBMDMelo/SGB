@@ -5,10 +5,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace SGB
 {
@@ -42,9 +44,18 @@ namespace SGB
                 "SELECT Valor FROM Parametros WHERE Chave = @chave",
                 new SqlParameter("@chave", "MultaDiaria"));
 
-            _multaDiaria = tabela.Rows.Count > 0
-                ? Convert.ToDecimal(tabela.Rows[0]["Valor"])
-                : 0m;
+            if (tabela.Rows.Count > 0)
+            {
+                string valorStr = tabela.Rows[0]["Valor"].ToString();
+
+                _multaDiaria = decimal.Parse(valorStr, CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                _multaDiaria = 0m;
+            }
+
+       
         }
 
         private void CarregarEmprestimosAbertos()
@@ -133,6 +144,7 @@ namespace SGB
 
         private void btnConfirmarDevolucao_Click(object sender, EventArgs e)
         {
+
             if (_emprestimoIdSelecionado == 0) return;
 
             var linha = dgvEmprestimosAbertos.CurrentRow;
@@ -144,52 +156,61 @@ namespace SGB
             decimal valorMulta = diasAtraso * _multaDiaria;
             string statusFinal = diasAtraso > 0 && !chkMultaPaga.Checked ? "ComPendencia" : "Devolvido";
 
-            try
+
+            if (diasAtraso > 0 && !chkMultaPaga.Checked)
             {
-                ConexaoBanco.ExecutarEmTransacao((conexao, transacao) =>
+                MessageBox.Show("Marque 'Multa Paga' para confirmar a devolução.");
+                return;
+            }
+
+            try
                 {
-                    using var cmdDevolucao = new SqlCommand(@"
+                    ConexaoBanco.ExecutarEmTransacao((conexao, transacao) =>
+                    {
+                        using var cmdDevolucao = new SqlCommand(@"
                         UPDATE Emprestimos
                         SET DataDevolucao = SYSDATETIME(),
                             DiasAtraso = @diasAtraso,
                             Status = @status
                         WHERE Id = @id", conexao, transacao);
-                    cmdDevolucao.Parameters.AddWithValue("@diasAtraso", diasAtraso);
-                    cmdDevolucao.Parameters.AddWithValue("@status", statusFinal);
-                    cmdDevolucao.Parameters.AddWithValue("@id", _emprestimoIdSelecionado);
-                    cmdDevolucao.ExecuteNonQuery();
+                        cmdDevolucao.Parameters.AddWithValue("@diasAtraso", diasAtraso);
+                        cmdDevolucao.Parameters.AddWithValue("@status", statusFinal);
+                        cmdDevolucao.Parameters.AddWithValue("@id", _emprestimoIdSelecionado);
+                        cmdDevolucao.ExecuteNonQuery();
 
-                    using var cmdExemplar = new SqlCommand(@"
+                        using var cmdExemplar = new SqlCommand(@"
                         UPDATE Exemplares
                         SET Status = 'Disponivel'
                         WHERE CodigoPatrimonio = @patrimonio", conexao, transacao);
-                    cmdExemplar.Parameters.AddWithValue("@patrimonio", patrimonio);
-                    cmdExemplar.ExecuteNonQuery();
+                        cmdExemplar.Parameters.AddWithValue("@patrimonio", patrimonio);
+                        cmdExemplar.ExecuteNonQuery();
 
-                    if (diasAtraso > 0)
-                    {
-                        using var cmdMulta = new SqlCommand(@"
+                        if (diasAtraso > 0)
+                        {
+                            using var cmdMulta = new SqlCommand(@"
                             INSERT INTO Cobrancas (EmprestimoId, Tipo, Valor, Pago)
                             VALUES (@emprestimoId, 'Multa', @valor, @pago)", conexao, transacao);
-                        cmdMulta.Parameters.AddWithValue("@emprestimoId", _emprestimoIdSelecionado);
-                        cmdMulta.Parameters.AddWithValue("@valor", valorMulta);
-                        cmdMulta.Parameters.AddWithValue("@pago", chkMultaPaga.Checked);
-                        cmdMulta.ExecuteNonQuery();
-                    }
-                });
+                            cmdMulta.Parameters.AddWithValue("@emprestimoId", _emprestimoIdSelecionado);
+                            cmdMulta.Parameters.AddWithValue("@valor", valorMulta);
+                            cmdMulta.Parameters.AddWithValue("@pago", chkMultaPaga.Checked);
+                            cmdMulta.ExecuteNonQuery();
+                        }
+                    });
 
-                labelMensagem.ForeColor = System.Drawing.Color.Green;
-                labelMensagem.Text = "Devolução registrada com sucesso.";
-                _emprestimoIdSelecionado = 0;
-                btnConfirmarDevolucao.Enabled = false;
-                LimparPainelSelecao();
-                CarregarEmprestimosAbertos();
-            }
-            catch (Exception ex)
-            {
-                labelMensagem.ForeColor = System.Drawing.Color.Red;
-                labelMensagem.Text = "Erro ao registrar devolução: " + ex.Message;
-            }
+                    labelMensagem.ForeColor = System.Drawing.Color.Green;
+                    labelMensagem.Text = "Devolução registrada com sucesso.";
+                    _emprestimoIdSelecionado = 0;
+                    btnConfirmarDevolucao.Enabled = false;
+                    LimparPainelSelecao();
+                    CarregarEmprestimosAbertos();
+                }
+                catch (Exception ex)
+                {
+                    labelMensagem.ForeColor = System.Drawing.Color.Red;
+                    labelMensagem.Text = "Erro ao registrar devolução: " + ex.Message;
+                }
+
+            
         }
 
         private void LimparPainelSelecao()
